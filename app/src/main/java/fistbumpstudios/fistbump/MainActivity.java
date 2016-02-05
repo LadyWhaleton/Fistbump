@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onSuccess() {
                         Context context = getApplicationContext();
 
-                        Toast.makeText(context, "I don't know what I am doing", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Do something here!", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
