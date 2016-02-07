@@ -20,11 +20,7 @@ public class Buddy {
     {
         return this.name;
     }
-
-    public String getID
-    {
-        return this.id;
-    }
+    public String getID () {return this.id; }
 
     public void changeName(String newName)
     {
