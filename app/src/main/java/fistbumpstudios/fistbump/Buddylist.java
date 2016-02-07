@@ -8,12 +8,20 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Buddylist extends AppCompatActivity {
 
+    //bool BuddyListChanged; // indicates whether the buddylist has been modified during the session
     EditText nameTxt, macTxt;
     List<Buddy> Buddies;
     ListView buddylistView;
@@ -29,7 +37,51 @@ public class Buddylist extends AppCompatActivity {
 
     }
 
-    private void loadBuddies()
+    // Load Buddies from internal device storage
+    // Note: We will need to create our on parsing algorithm.
+    private void LoadBuddies()
+    {
+        try {
+            String Message;
+            FileInputStream fis = openFileInput("userBuddyList");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuffer sb = new StringBuffer();
+
+            while ( (Message = br.readLine()) != null)
+            {
+                sb.append(Message + "'n");
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // Store Buddies to internal device storage
+    private void StoreBuddies()
+    {
+        String msg = "Buddies";
+        String fileName = "userBuddyList";
+
+        // try to open the file, then write, then close
+        try {
+            FileOutputStream fos = openFileOutput (fileName, MODE_PRIVATE);
+            fos.write (msg.getBytes());
+            fos.close();
+            Toast.makeText(getApplicationContext(), "Buddylist stored", Toast.LENGTH_SHORT).show();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // update buddies (while in App)
+    private void LiveUpdateBuddies()
     {
         ArrayAdapter<Buddy> buddyAdapter = new BuddyListAdapter();
         buddylistView.setAdapter(buddyAdapter);
