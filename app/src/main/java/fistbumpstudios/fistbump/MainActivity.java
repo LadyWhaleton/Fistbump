@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         //  Indicates a change in the Wi-Fi P2P status.
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         Context context = getApplicationContext();
-
                         Toast.makeText(context, "Do something here!", Toast.LENGTH_SHORT).show();
                     }
 
@@ -73,8 +74,33 @@ public class MainActivity extends AppCompatActivity {
                         //Toast.makeText(context, "I also don't know what I am doing", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+                WifiP2pManager.PeerListListener myPeerListListener;
+
+                if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+
+                    // request available peers from the wifi p2p manager. This is an
+                    // asynchronous call and the calling activity is notified with a
+                    // callback on PeerListListener.onPeersAvailable()
+                    if (mManager != null) {
+                        mManager.requestPeers(mChannel, myPeerListListener);
+                    }
+                }
+
             }
         });
+
+
+//        if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
+//
+//            // request available peers from the wifi p2p manager. This is an
+//            // asynchronous call and the calling activity is notified with a
+//            // callback on PeerListListener.onPeersAvailable()
+//            if (mManager != null) {
+//                mManager.requestPeers(mChannel, myPeerListListener);
+//            }
+//        }
+
     }
 
 
