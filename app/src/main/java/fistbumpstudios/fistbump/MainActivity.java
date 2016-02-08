@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
-    /* unregister the broadcast receiver */
+
     @Override
     protected void onPause() {
         super.onPause();
