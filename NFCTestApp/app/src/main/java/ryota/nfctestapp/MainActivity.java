@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     private NfcAdapter nfcAdapter;
     String username = "";
+    boolean setUsername = false ;
     String filename = "";
     File userInfo = null;
 
@@ -94,8 +95,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendFile(View view) {
-        if( username.equals("")){
-            Toast.makeText(this, "Please Create a Username first!", Toast.LENGTH_SHORT);
+        if(username.equals("")){
+            Toast.makeText(this, "Enter a username first!" + username ,
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -124,11 +126,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     public void setUsername(View view){
+
         EditText mEdit   = (EditText)findViewById(R.id.username);
         username = mEdit.getText().toString();
+
+        if(username.equals("")){
+            Toast.makeText(this, "Enter a username!" + username ,
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         filename = username + ".txt";
-
-
         Toast.makeText(this, "Set Username to " + username ,
                 Toast.LENGTH_SHORT).show();
     }
