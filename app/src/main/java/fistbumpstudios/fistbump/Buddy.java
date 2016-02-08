@@ -10,7 +10,7 @@ import android.net.Uri;
 public class Buddy {
 
     private String name, id;
-    privte Uri profilePic;
+    private Uri profilePic;
 
     Buddy (String name, String id, Uri image)
     {

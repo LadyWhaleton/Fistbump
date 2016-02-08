@@ -123,7 +123,7 @@ public class Buddylist extends AppCompatActivity {
 
             // Profile pic
             ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
-            pic.
+            pic.setImageURI(currentBuddy.getProficPic());
 
             return view;
         }
