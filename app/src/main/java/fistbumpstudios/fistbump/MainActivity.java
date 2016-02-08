@@ -166,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
             nfcAdapter.setBeamPushUris(
                     new Uri[]{Uri.fromFile(userInfo)}, this);
 
-            Intent intent = new Intent(this, setUserName.class);
+            Intent intent = new Intent(this, wait_beam.class);
             startActivity(intent);
             finish();
         }

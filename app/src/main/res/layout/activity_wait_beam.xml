@@ -6,6 +6,18 @@
     tools:context="fistbumpstudios.fistbump.wait_beam">
 
     <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:id="@+id/imageButton"
+        android:scaleType="fitCenter"
+        android:src="@drawable/back"
+        android:layout_alignParentTop="true"
+        android:layout_below="@+id/textView"
+        />
+
+    <ImageView
         android:id="@+id/fullscreen_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,15 +43,5 @@
         android:layout_centerHorizontal="true" />
 
 
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
-        android:id="@+id/imageButton"
-        android:scaleType="fitCenter"
-        android:src="@drawable/backIcon"
-        android:layout_alignParentTop="true"
-        android:layout_below="@+id/textView"
-        />
+
 </RelativeLayout>
