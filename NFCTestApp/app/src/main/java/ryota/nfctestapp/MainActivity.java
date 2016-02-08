@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,14 +23,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-
-
-
 public class MainActivity extends AppCompatActivity {
 
     private NfcAdapter nfcAdapter;
-    String username = "RyotaSaito";
-    String filename = username + ".txt";
+    String username = "";
+    String filename = "";
     File userInfo = null;
 
     @Override
@@ -54,18 +52,15 @@ public class MainActivity extends AppCompatActivity {
             // NFC and Android Beam file transfer is supported.
             Toast.makeText(this, "Android Beam is supported on your device.",
                     Toast.LENGTH_SHORT).show();
-            makeVerifyFile();
         }
     }
-
-
     public String getMAC(){
         WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
         return info.getMacAddress() + "\n";
     }
-
     private void makeVerifyFile(){
+
         try {
             File directory = new File(Environment.getExternalStorageDirectory(),"FistBump");
             //Toast.makeText(this,Environment.getExternalStorageDirectory(),Toast.LENGTH_LONG).show();
@@ -75,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
             if (!directory.exists()) {
                 success = directory.mkdirs();
             }
-
             if (success) {
                 Toast.makeText(this,directory.getAbsolutePath() + " Created!",
                         Toast.LENGTH_LONG).show();
@@ -83,8 +77,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,directory.getAbsolutePath() + " Failed!",
                         Toast.LENGTH_LONG).show();
             }
-
-
             userInfo = new File(directory, filename);
             FileOutputStream fos = new FileOutputStream(userInfo);
             OutputStreamWriter out = new OutputStreamWriter(fos);
@@ -99,15 +91,19 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public void sendFile(View view) {
+        if( username == ""){
+            Toast.makeText(this, "Please Create a Username first!", Toast.LENGTH_SHORT);
+            return;
+        }
+
+        makeVerifyFile();
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         // Check whether NFC is enabled on device
-        if(!nfcAdapter.isEnabled()){
+        if (!nfcAdapter.isEnabled()) {
             // NFC is disabled, show the settings UI
             // to enable NFC
             Toast.makeText(this, "Please enable NFC.",
@@ -121,13 +117,20 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enable Android Beam.",
                     Toast.LENGTH_SHORT).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
-        }
-        else {
+        } else {
             userInfo.setReadable(true, false);
             nfcAdapter.setBeamPushUris(
                     new Uri[]{Uri.fromFile(userInfo)}, this);
         }
-
-
     }
+    public void setUsername(View view){
+        EditText mEdit   = (EditText)findViewById(R.id.username);
+        username = mEdit.getText().toString();
+        filename = username + ".txt";
+
+        Toast.makeText(this, "Set Username to " + username ,
+                Toast.LENGTH_SHORT).show();
+    }
+
+
 }
