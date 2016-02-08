@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendFile(View view) {
-        if( username == ""){
+        if( username.equals("")){
             Toast.makeText(this, "Please Create a Username first!", Toast.LENGTH_SHORT);
             return;
         }
@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         EditText mEdit   = (EditText)findViewById(R.id.username);
         username = mEdit.getText().toString();
         filename = username + ".txt";
+
 
         Toast.makeText(this, "Set Username to " + username ,
                 Toast.LENGTH_SHORT).show();
