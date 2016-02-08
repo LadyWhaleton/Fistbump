@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void sendFile(View view) {
+    public void addFriend(View view) {
         if(username.equals("")){
             Toast.makeText(this, "Enter a username first!" + username ,
                     Toast.LENGTH_SHORT).show();
