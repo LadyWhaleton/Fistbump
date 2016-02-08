@@ -134,14 +134,14 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            activity.display_message("UHJGHGHGHHGG1!\n");
+            //activity.display_message("UHJGHGHGHHGG1!\n");
             if(networkState.isConnected())
             {
                 mManager.requestConnectionInfo(mChannel, connectionInfoListener);
             }
             else
             {
-                activity.display_message("UHJGHGHGHHGG2!\n");
+                //activity.display_message("UHJGHGHGHHGG2!\n");
                 connected_devices.clear();
             }
 

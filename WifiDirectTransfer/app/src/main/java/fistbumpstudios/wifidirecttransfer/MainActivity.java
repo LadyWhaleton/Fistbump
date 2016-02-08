@@ -37,16 +37,13 @@ public class MainActivity extends AppCompatActivity {
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
     TextView message_area;
+    TextView input_area;
     private ServerSocket serverSocket;
+    public Socket clientSocket;
     Thread serverThread = null;
     Thread clientThread = null;
     public static final int SERVERPORT = 8080;
     private InetAddress serverAddr = null;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-
 
 
     @Override
@@ -54,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         message_area = (TextView) findViewById(R.id.message_area);
+        input_area = (TextView) findViewById(R.id.input_area);
 
         //  Indicates a change in the Wi-Fi P2P status.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -79,15 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-        Button button = (Button) findViewById(R.id.button);
-
-
-
     }
 
-    public void button_press(View view) {
+    public void connect_button_press(View view) {
         mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
@@ -98,10 +90,24 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int reasonCode) {
-                Context context = getApplicationContext();
-                //Toast.makeText(context, "I also don't know what I am doing", Toast.LENGTH_SHORT).show();
+
             }
         });
+    }
+
+    public void send_button_press(View view) {
+        if (clientSocket != null && input_area.getText().length() > 0)
+        {
+            try {
+                DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+                outputStream.writeUTF(input_area.getText().toString() + "\n");
+                input_area.setText("");
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
 
@@ -124,23 +130,22 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
-
-
     class ServerThread implements Runnable {
 
         public void run() {
             Socket socket = null;
             try {
                 serverSocket = new ServerSocket(SERVERPORT);
-                int i = 0;
+
                 while (!Thread.currentThread().isInterrupted()) {
 
                     socket = serverSocket.accept();
+                    display_message("I have connected with a client\n");
+                    clientSocket = socket;
 
                     CommunicationThread commThread = new CommunicationThread(socket);
                     new Thread(commThread).start();
-                    serverSocket = new ServerSocket(SERVERPORT + ++i);
+                    serverSocket = new ServerSocket(SERVERPORT);
 
                 }
             } catch (IOException e) {
@@ -184,15 +189,18 @@ public class MainActivity extends AppCompatActivity {
     class ClientThread implements Runnable {
 
         public void run() {
-            Socket socket = null;
+
             try {
-                socket = new Socket(serverAddr, SERVERPORT);
-                display_message("Ihave connected with sercer\n");
-                DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+                clientSocket = new Socket(serverAddr, SERVERPORT);
+                display_message("I have connected with server\n");
 
+                DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
+                while (!Thread.currentThread().isInterrupted()) {
 
-                outputStream.writeUTF("Please fucking work!!!");
-                socket.close();
+                    String read = inputStream.readUTF();
+                    display_message(read);
+                }
+
 
             } catch (IOException e) {
                 e.printStackTrace();
