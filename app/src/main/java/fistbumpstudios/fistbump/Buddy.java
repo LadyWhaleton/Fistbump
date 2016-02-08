@@ -1,4 +1,5 @@
 package fistbumpstudios.fistbump;
+import android.net.Uri;
 
 /**
  * Created by Stephanie Tong on 2/5/2016.
@@ -9,11 +10,14 @@ package fistbumpstudios.fistbump;
 public class Buddy {
 
     private String name, id;
+    privte Uri profilePic;
 
-    Buddy (String name, String id)
+    Buddy (String name, String id, Uri image)
     {
         this.name = name;
         this.id = id;
+        this.profilePic = image;
+
     }
 
     public String getName()
@@ -21,6 +25,7 @@ public class Buddy {
         return this.name;
     }
     public String getID () {return this.id; }
+    public Uri getProficPic() { return this.profilePic; }
 
     public void changeName(String newName)
     {

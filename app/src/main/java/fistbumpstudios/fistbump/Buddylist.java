@@ -1,11 +1,13 @@
 package fistbumpstudios.fistbump;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,9 +89,10 @@ public class Buddylist extends AppCompatActivity {
         buddylistView.setAdapter(buddyAdapter);
     }
 
-    private void addBuddy(String name, String id)
+    // Implementation question: Should we update the database right after adding?
+    private void addBuddy(String name, String id, Uri pic)
     {
-        Buddies.add(new Buddy (name, id));
+        Buddies.add(new Buddy (name, id, pic));
     }
 
     private class BuddyListAdapter  extends ArrayAdapter<Buddy>
@@ -117,6 +120,10 @@ public class Buddylist extends AppCompatActivity {
             // do the same for the other fields
             TextView macAddr = (TextView) view.findViewById(R.id.MacAddress);
             macAddr.setText(currentBuddy.getID());
+
+            // Profile pic
+            ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
+            pic.
 
             return view;
         }
