@@ -38,10 +38,20 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="send"
+        android:text="send message"
         android:id="@+id/send_button"
         android:layout_below="@+id/input_area"
         android:onClick="send_button_press"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="send as file"
+        android:id="@+id/send_file_button"
+        android:onClick="send_file_button_press"
+        android:layout_below="@+id/input_area"
+        android:layout_alignStart="@+id/connect_button"
+        android:layout_marginStart="49dp" />
 
 </RelativeLayout>

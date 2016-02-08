@@ -9,6 +9,7 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,9 +20,13 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,9 +45,12 @@ public class MainActivity extends AppCompatActivity {
     TextView input_area;
     private ServerSocket serverSocket;
     public Socket clientSocket;
+    private ServerSocket serverFileSocket;
+    public Socket clientFileSocket;
     Thread serverThread = null;
     Thread clientThread = null;
-    public static final int SERVERPORT = 8080;
+    public static final int SERVERTEXTPORT = 8080;
+    public static final int SERVERFILEPORT = 8081;
     private InetAddress serverAddr = null;
 
 
@@ -110,6 +118,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void send_file_button_press(View view) {
+        if (clientFileSocket != null && input_area.getText().length() > 0)
+        {
+            try {
+                DataOutputStream outputStream = new DataOutputStream(clientFileSocket.getOutputStream());
+                outputStream.writeUTF(input_area.getText().toString() + "\n");
+                input_area.setText("");
+                clientFileSocket.close();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
 
     public void make_server_thread()
@@ -135,17 +159,23 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             Socket socket = null;
             try {
-                serverSocket = new ServerSocket(SERVERPORT);
+                serverSocket = new ServerSocket(SERVERTEXTPORT);
+                serverFileSocket = new ServerSocket(SERVERFILEPORT);
+
 
                 while (!Thread.currentThread().isInterrupted()) {
 
                     socket = serverSocket.accept();
+                    clientFileSocket = serverFileSocket.accept();
                     display_message("I have connected with a client\n");
                     clientSocket = socket;
 
+
                     CommunicationThread commThread = new CommunicationThread(socket);
                     new Thread(commThread).start();
-                    serverSocket = new ServerSocket(SERVERPORT);
+
+                    ReceiveFileThread readFileThread = new ReceiveFileThread(clientFileSocket);
+                    new Thread(readFileThread).start();
 
                 }
             } catch (IOException e) {
@@ -166,8 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
         public void run() {
 
-
-
             try {
                 DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
 
@@ -186,15 +214,59 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    class ReceiveFileThread implements Runnable {
+
+        private Socket clientSocket;
+
+        public ReceiveFileThread(Socket clientSocket) {
+
+            this.clientSocket = clientSocket;
+        }
+
+        public void run() {
+
+
+
+            try {
+                String savedAs = "WDFL_File_" + System.currentTimeMillis() + ".txt";
+                File file = new File(
+                        Environment.getExternalStorageDirectory(),
+                        savedAs);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                InputStream is = this.clientSocket.getInputStream();
+
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = is.read(buffer)) != -1)
+                {
+                    fileOutputStream.write(buffer, 0, bytesRead);
+                }
+
+                display_message("File has been received!\n");
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
     class ClientThread implements Runnable {
 
         public void run() {
 
             try {
-                clientSocket = new Socket(serverAddr, SERVERPORT);
+                clientSocket = new Socket(serverAddr, SERVERTEXTPORT);
+                clientFileSocket = new Socket(serverAddr, SERVERFILEPORT);
                 display_message("I have connected with server\n");
 
+                ReceiveFileThread readFileThread = new ReceiveFileThread(clientSocket);
+                new Thread(readFileThread).start();
+
                 DataInputStream inputStream = new DataInputStream(clientSocket.getInputStream());
+
                 while (!Thread.currentThread().isInterrupted()) {
 
                     String read = inputStream.readUTF();
