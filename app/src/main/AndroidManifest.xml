@@ -44,8 +44,7 @@
             android:name=".setUserName">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".Buddylist"
@@ -53,8 +52,7 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
@@ -62,11 +60,10 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_wait_beam"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/FullscreenTheme">
+            android:theme="@android:style/Theme.NoTitleBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fistbumpstudios.fistbump.MainActivity" />
-        </activity>
+        </>
     </application>
-
 </manifest>
