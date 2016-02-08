@@ -33,18 +33,20 @@ import java.io.OutputStreamWriter;
 public class MainActivity extends AppCompatActivity {
 
     private NfcAdapter nfcAdapter;
-    String username = "";
-    String filename = "";
+    String username, filename;
     File userInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        checkBeam();
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        username = getIntent().getStringExtra("uname") ;
+        filename = username+".txt";
+        checkBeam();
+
     }
 
     @Override
@@ -117,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,directory.getAbsolutePath() + " Failed!",
                         Toast.LENGTH_LONG).show();
             }
+
             userInfo = new File(directory, filename);
             FileOutputStream fos = new FileOutputStream(userInfo);
             OutputStreamWriter out = new OutputStreamWriter(fos);
