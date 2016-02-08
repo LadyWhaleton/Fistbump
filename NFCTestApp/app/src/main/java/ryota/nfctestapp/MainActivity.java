@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     private NfcAdapter nfcAdapter;
     String username = "";
-    boolean setUsername = false ;
     String filename = "";
     File userInfo = null;
 
@@ -37,20 +36,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         PackageManager pm = this.getPackageManager();
-        // Check whether NFC is available on device
         if (!pm.hasSystemFeature(PackageManager.FEATURE_NFC)) {
-            // NFC is not available on the device.
             Toast.makeText(this, "The device does not has NFC hardware.",
                     Toast.LENGTH_SHORT).show();
         }
-        // Check whether device is running Android 4.1 or higher
         else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            // Android Beam feature is not supported.
             Toast.makeText(this, "Android Beam is not supported.",
                     Toast.LENGTH_SHORT).show();
         }
         else {
-            // NFC and Android Beam file transfer is supported.
             Toast.makeText(this, "Android Beam is supported on your device.",
                     Toast.LENGTH_SHORT).show();
         }
@@ -64,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             File directory = new File(Environment.getExternalStorageDirectory(),"FistBump");
-            //Toast.makeText(this,Environment.getExternalStorageDirectory(),Toast.LENGTH_LONG).show();
-
             boolean success = true;
 
             if (!directory.exists()) {
@@ -140,6 +132,4 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Set Username to " + username ,
                 Toast.LENGTH_SHORT).show();
     }
-
-
 }
