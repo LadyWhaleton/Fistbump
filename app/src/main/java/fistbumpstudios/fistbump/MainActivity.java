@@ -42,9 +42,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        username = getIntent().getStringExtra("uname") ;
-        filename = username+".txt";
         checkBeam();
 
     }
@@ -58,10 +55,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -82,11 +75,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public String getMAC(){
-        WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress() + "\n";
-    }
 
     private  void checkBeam(){
         PackageManager pm = this.getPackageManager();
@@ -103,66 +91,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-    private void makeVerifyFile(){
-
-        try {
-            File directory = new File(Environment.getExternalStorageDirectory(),"FistBump");
-            boolean success = true;
-
-            if (!directory.exists()) {
-                success = directory.mkdirs();
-            }
-            if (success) {
-                Toast.makeText(this,directory.getAbsolutePath() + " Created!",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this,directory.getAbsolutePath() + " Failed!",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            userInfo = new File(directory, filename);
-            FileOutputStream fos = new FileOutputStream(userInfo);
-            OutputStreamWriter out = new OutputStreamWriter(fos);
-
-            out.write(username + "\n");
-            out.write(getMAC());
-
-            out.write('\n');
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void addFriend(View view) {
-        makeVerifyFile();
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        if (!nfcAdapter.isEnabled()) {
-            Toast.makeText(this, "Please enable NFC.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
-        }
-
-        else if (!nfcAdapter.isNdefPushEnabled()) {
-            Toast.makeText(this, "Please enable Android Beam.",
-                    Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
-        } else {
-            userInfo.setReadable(true, false);
-            nfcAdapter.setBeamPushUris(
-                    new Uri[]{Uri.fromFile(userInfo)}, this);
-
-            //intent.putExtra("file", userInfo);
-
             //send file to new intent and beam!
-//            Intent intent = new Intent(this, wait_beam.class);
-//            startActivity(intent);
-//            finish();
+            Intent intent = new Intent(this, wait_beam.class);
+            startActivity(intent);
+            finish();
         }
     }
 
-}
+
