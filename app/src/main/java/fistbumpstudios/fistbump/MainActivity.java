@@ -114,10 +114,11 @@ public class MainActivity extends AppCompatActivity {
             }
             if (success) {
                 Toast.makeText(this,directory.getAbsolutePath() + " Created!",
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this,directory.getAbsolutePath() + " Failed!",
                         Toast.LENGTH_LONG).show();
+                return;
             }
 
             userInfo = new File(directory, filename);
@@ -137,27 +138,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addFriend(View view) {
-        if(username.equals("")){
-            Toast.makeText(this, "Enter a username first!" + username ,
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         makeVerifyFile();
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        // Check whether NFC is enabled on device
         if (!nfcAdapter.isEnabled()) {
-            // NFC is disabled, show the settings UI
-            // to enable NFC
             Toast.makeText(this, "Please enable NFC.",
                     Toast.LENGTH_SHORT).show();
             startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
         }
-        // Check whether Android Beam feature is enabled on device
+
         else if (!nfcAdapter.isNdefPushEnabled()) {
-            // Android Beam is disabled, show the settings UI
-            // to enable Android Beam
             Toast.makeText(this, "Please enable Android Beam.",
                     Toast.LENGTH_SHORT).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
@@ -166,25 +156,13 @@ public class MainActivity extends AppCompatActivity {
             nfcAdapter.setBeamPushUris(
                     new Uri[]{Uri.fromFile(userInfo)}, this);
 
+            //intent.putExtra("file", userInfo);
+
+            //send file to new intent and beam!
 //            Intent intent = new Intent(this, wait_beam.class);
 //            startActivity(intent);
 //            finish();
         }
-    }
-    public void setUsername(View view){
-
-        EditText mEdit   = (EditText)findViewById(R.id.username);
-        username = mEdit.getText().toString();
-
-        if(username.equals("")){
-            Toast.makeText(this, "Enter a username!" + username ,
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        filename = username + ".txt";
-        Toast.makeText(this, "Set Username to " + username ,
-                Toast.LENGTH_SHORT).show();
     }
 
 }

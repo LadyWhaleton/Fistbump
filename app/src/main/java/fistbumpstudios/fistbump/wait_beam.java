@@ -14,6 +14,8 @@ import android.support.v4.app.NavUtils;
 public class wait_beam extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //beam file after wait screen is opened
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_beam);
     }
