@@ -19,7 +19,7 @@ import java.io.OutputStreamWriter;
 
 public class setUserName extends AppCompatActivity {
     File userInfo = null;
-    final public static String USERFILENAME = "user_info";
+    final public static String USERFILENAME = "user_info.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +37,8 @@ public class setUserName extends AppCompatActivity {
 
         try {
             boolean success = true;
-            FileOutputStream fos = openFileOutput(USERFILENAME, Context.MODE_PRIVATE);
+            username = username +'\n';
+            FileOutputStream fos = openFileOutput("user_info.txt", Context.MODE_PRIVATE);
             fos.write(username.getBytes());
             fos.write(getMAC().getBytes());
             fos.close();
