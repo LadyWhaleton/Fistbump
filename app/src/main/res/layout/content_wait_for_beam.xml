@@ -5,11 +5,12 @@
     android:background="#0099cc"
     tools:context="fistbumpstudios.fistbump.wait_beam">
 
-    <ImageView
+    <ImageButton
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:paddingTop="10dp"
         android:paddingLeft="10dp"
+        android:onClick="goBack"
         android:id="@+id/imageButton"
         android:scaleType="fitCenter"
         android:src="@drawable/back"

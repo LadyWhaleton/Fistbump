@@ -1,5 +1,6 @@
 package fistbumpstudios.fistbump;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,9 +20,17 @@ public class WaitForBeam extends AppCompatActivity {
 
         try {
             FileInputStream in = openFileInput(setUserName.USERFILENAME);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public void goBack(View view){
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
+
     }
 
 }
