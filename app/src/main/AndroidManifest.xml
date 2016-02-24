@@ -62,7 +62,12 @@
             android:name=".WaitForBeam"
             android:label="@string/title_activity_wait_for_beam"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".recive_friend"></activity>
+        <activity android:name=".acceptFriend">
+            <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

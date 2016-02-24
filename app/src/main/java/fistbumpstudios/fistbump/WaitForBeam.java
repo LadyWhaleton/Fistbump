@@ -7,6 +7,7 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,7 +28,8 @@ public class WaitForBeam extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_for_beam);
-        File file = new File("user_info.txt");
+        File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
+        File file = new File(dir, "user_info.txt");
 
 //        try {
 //            FileInputStream in = openFileInput("user_info.txt");
