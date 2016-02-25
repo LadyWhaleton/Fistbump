@@ -12,8 +12,32 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
-        android:id="@+id/textViewFriend"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Accept this friend?"
+        android:id="@+id/textView3"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Yes"
+        android:onClick="accept"
+        android:id="@+id/acceptButton"
+        android:layout_marginBottom="41dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/textView3" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="No"
+        android:onClick="reject"
+        android:id="@+id/rejectButton"
+        android:layout_alignTop="@+id/acceptButton"
+        android:layout_toEndOf="@+id/acceptButton" />
+
+
 </RelativeLayout>

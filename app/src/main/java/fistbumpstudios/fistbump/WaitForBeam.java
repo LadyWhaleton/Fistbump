@@ -40,7 +40,7 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
             br = new BufferedReader(new FileReader(userfile));
             String line;
             while ((line = br.readLine()) != null) {
-                message += line +'\n';
+                message += line +";";
             }
             br.close();
         } catch (IOException e) {
