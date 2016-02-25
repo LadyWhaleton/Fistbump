@@ -1,36 +1,23 @@
 package fistbumpstudios.fistbump;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pManager;
+import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
     private String mParentPath;
@@ -46,18 +33,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         checkBeam();
-        processIntent(getIntent());
     }
-
-    private void processIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
-        String action = intent.getAction();
-        if (Intent.ACTION_VIEW.equals(action)) {
-            Log.d("beam", "got file!");
-            Toast.makeText(this, "received file!" , Toast.LENGTH_LONG).show();
-        }
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,12 +54,20 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
+        Intent intent = getIntent();
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
+            //mTextView.setText(new String(message.getRecords()[0].getPayload()));
+        }
     }
 
     @Override
@@ -130,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-
-
     public void addFriend(View view) {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -151,11 +133,4 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
-
-    public void reciveRequest(View view) {
-
-    }
-
-
-
 }

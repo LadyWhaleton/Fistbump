@@ -3,28 +3,23 @@ package fistbumpstudios.fistbump;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.nfc.NfcAdapter;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class setUserName extends AppCompatActivity {
-    public static File userfile;
+    File userfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +37,6 @@ public class setUserName extends AppCompatActivity {
 
         try {
             File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-            String u = username + ".txt";
             userfile = new File(dir, "user_info.txt");
             FileOutputStream fos = new FileOutputStream(userfile);
             username = username +'\n';

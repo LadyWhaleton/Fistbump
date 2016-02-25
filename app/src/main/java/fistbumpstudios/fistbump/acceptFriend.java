@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 public class acceptFriend extends AppCompatActivity {
 
+
     private TextView mTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,6 @@ public class acceptFriend extends AppCompatActivity {
             mTextView.setText(new String(message.getRecords()[0].getPayload()));
 
         }
-
         else
             mTextView.setText("Waiting for NDEF Message");
     }
