@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class acceptFriend extends AppCompatActivity {
@@ -48,8 +48,9 @@ public class acceptFriend extends AppCompatActivity {
 
         File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
         File userfile = new File(dir, "friends.txt");
-        FileWriter writer = new FileWriter(userfile, true);
-
+        FileOutputStream fos = new FileOutputStream(userfile, true);
+        fos.write(obj.toString().getBytes());
+        fos.close();
         Toast.makeText(this, obj.toString(), Toast.LENGTH_LONG).show();
 
 
