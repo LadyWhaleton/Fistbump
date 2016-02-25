@@ -1,52 +1,38 @@
 package fistbumpstudios.fistbump;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.p2p.WifiP2pManager;
+import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
-
+    private String mParentPath;
+    private Intent mIntent;
     private NfcAdapter nfcAdapter;
-    String username, filename;
     File userInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        incomingRequest();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        username = getIntent().getStringExtra("uname") ;
-        filename = username+".txt";
         checkBeam();
-
     }
 
     @Override
@@ -68,12 +54,20 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
+        Intent intent = getIntent();
+
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
+                    NfcAdapter.EXTRA_NDEF_MESSAGES);
+
+            NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
+            //mTextView.setText(new String(message.getRecords()[0].getPayload()));
+        }
     }
 
     @Override
@@ -81,11 +75,28 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    public String handleFileUri(Uri beamUri) {
+        // Get the path part of the URI
+        String fileName = beamUri.getPath();
+        // Create a File object for this filename
+        File copiedFile = new File(fileName);
+        // Get a string containing the file's parent directory
+        return copiedFile.getParent();
+    }
 
-    public String getMAC(){
-        WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress() + "\n";
+
+    private void incomingRequest() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (TextUtils.equals(action, Intent.ACTION_VIEW)) {
+            Uri beamUri = intent.getData();
+            Toast.makeText(this, "Received NFC", Toast.LENGTH_LONG).show();
+            if (TextUtils.equals(beamUri.getScheme(), "file")) {
+                mParentPath = handleFileUri(beamUri);
+            }
+        }
     }
 
     private  void checkBeam(){
@@ -103,42 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
         }
     }
-    private void makeVerifyFile(){
-
-        try {
-            File directory = new File(Environment.getExternalStorageDirectory(),"FistBump");
-            boolean success = true;
-
-            if (!directory.exists()) {
-                success = directory.mkdirs();
-            }
-            if (success) {
-                Toast.makeText(this,directory.getAbsolutePath() + " Created!",
-                        Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this,directory.getAbsolutePath() + " Failed!",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            userInfo = new File(directory, filename);
-            FileOutputStream fos = new FileOutputStream(userInfo);
-            OutputStreamWriter out = new OutputStreamWriter(fos);
-
-            out.write(username + "\n");
-            out.write(getMAC());
-
-            out.write('\n');
-            out.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void addFriend(View view) {
-        makeVerifyFile();
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (!nfcAdapter.isEnabled()) {
@@ -152,17 +128,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
         } else {
-            userInfo.setReadable(true, false);
-            nfcAdapter.setBeamPushUris(
-                    new Uri[]{Uri.fromFile(userInfo)}, this);
-
-            //intent.putExtra("file", userInfo);
-
-            //send file to new intent and beam!
-//            Intent intent = new Intent(this, wait_beam.class);
-//            startActivity(intent);
-//            finish();
+            Intent intent = new Intent(this, WaitForBeam.class);
+            startActivity(intent);
+            finish();
         }
     }
-
 }

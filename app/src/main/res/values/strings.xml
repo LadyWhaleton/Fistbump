@@ -7,5 +7,6 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="beamPrompt">Place your friend\'s phone back to back\n Press \"Push to Beam\" when prompted</string>
+    <string name="title_activity_wait_for_beam">WaitForBeam</string>
 
 </resources>
