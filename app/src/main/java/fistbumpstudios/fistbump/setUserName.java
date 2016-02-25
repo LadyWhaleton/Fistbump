@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class setUserName extends AppCompatActivity {
-
+    public static File userfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,12 +41,10 @@ public class setUserName extends AppCompatActivity {
     private void makeVerifyFile(String username){
 
         try {
-            boolean success = true;
-            //FileOutputStream fos = openFileOutput("user_info.txt",Context.MODE_WORLD_READABLE);
-
             File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-            File file = new File(dir, "user_info.txt");
-            FileOutputStream fos = new FileOutputStream(file);
+            String u = username + ".txt";
+            userfile = new File(dir, "user_info.txt");
+            FileOutputStream fos = new FileOutputStream(userfile);
             username = username +'\n';
             fos.write(username.getBytes());
             fos.write(getMAC().getBytes());

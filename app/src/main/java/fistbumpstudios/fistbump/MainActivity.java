@@ -18,6 +18,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,18 +33,31 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity {
-
+    private String mParentPath;
+    private Intent mIntent;
     private NfcAdapter nfcAdapter;
     File userInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        incomingRequest();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         checkBeam();
+        processIntent(getIntent());
     }
+
+    private void processIntent(Intent intent) {
+        Bundle extras = intent.getExtras();
+        String action = intent.getAction();
+        if (Intent.ACTION_VIEW.equals(action)) {
+            Log.d("beam", "got file!");
+            Toast.makeText(this, "received file!" , Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -76,7 +91,29 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    public String handleFileUri(Uri beamUri) {
+        // Get the path part of the URI
+        String fileName = beamUri.getPath();
+        // Create a File object for this filename
+        File copiedFile = new File(fileName);
+        // Get a string containing the file's parent directory
+        return copiedFile.getParent();
+    }
 
+
+    private void incomingRequest() {
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (TextUtils.equals(action, Intent.ACTION_VIEW)) {
+            Uri beamUri = intent.getData();
+            Toast.makeText(this, "Received NFC", Toast.LENGTH_LONG).show();
+            if (TextUtils.equals(beamUri.getScheme(), "file")) {
+                mParentPath = handleFileUri(beamUri);
+            }
+        }
+    }
 
     private  void checkBeam(){
         PackageManager pm = this.getPackageManager();
@@ -114,5 +151,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    public void reciveRequest(View view) {
+
+    }
+
+
 
 }
