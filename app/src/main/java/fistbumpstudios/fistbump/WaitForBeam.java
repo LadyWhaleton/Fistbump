@@ -33,6 +33,8 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         String message = "";
+        //FileInputStream fis = openFileInput("hello.txt", Context.MODE_PRIVATE);
+
         File userfile = new File("user_info.txt");
         BufferedReader br = null;
 
