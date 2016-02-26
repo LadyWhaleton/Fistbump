@@ -1,4 +1,5 @@
 package fistbumpstudios.fistbump;
+
 import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
@@ -44,7 +45,10 @@ public class acceptFriend extends AppCompatActivity {
         obj.put("MAC Address", infoArray[1]);
         //create new json object and save to filesystem
 
-        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE);
+//        File dir = new File(Environment.getDataDirectory(), "FistBump");
+//        File file = new File(dir, "friends.txt");
+//        FileOutputStream fos = new FileOutputStream(file, true);
+        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE | MODE_APPEND);
         fos.write(obj.toString().getBytes());
         fos.close();
 
