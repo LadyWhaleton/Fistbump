@@ -60,7 +60,6 @@ public class Buddylist extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     // Store Buddies to internal device storage

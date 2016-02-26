@@ -6,9 +6,9 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,9 +33,9 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         String message = "";
-        File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-        File userfile = new File(dir, "user_info.txt");
+        File userfile = new File("user_info.txt");
         BufferedReader br = null;
+
         try {
             br = new BufferedReader(new FileReader(userfile));
             String line;
@@ -45,8 +45,8 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "cannot find userinfo" , Toast.LENGTH_LONG).show();
         }
-
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;

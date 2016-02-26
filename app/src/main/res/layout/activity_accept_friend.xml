@@ -38,6 +38,4 @@
         android:id="@+id/rejectButton"
         android:layout_alignTop="@+id/acceptButton"
         android:layout_toEndOf="@+id/acceptButton" />
-
-
 </RelativeLayout>

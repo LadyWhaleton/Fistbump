@@ -80,7 +80,6 @@ public class MainActivity extends AppCompatActivity {
         return copiedFile.getParent();
     }
 
-
     private void incomingRequest() {
         Intent intent = getIntent();
         String action = intent.getAction();

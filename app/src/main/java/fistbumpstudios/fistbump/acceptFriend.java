@@ -1,25 +1,20 @@
 package fistbumpstudios.fistbump;
-
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class acceptFriend extends AppCompatActivity {
-
-
     String infoRaw;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +41,14 @@ public class acceptFriend extends AppCompatActivity {
         obj.put("MAC Address", infoArray[1]);
         //create new json object and save to filesystem
 
-        File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-        File userfile = new File(dir, "friends.txt");
-        FileOutputStream fos = new FileOutputStream(userfile, true);
+        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE);
         fos.write(obj.toString().getBytes());
         fos.close();
-        Toast.makeText(this, obj.toString(), Toast.LENGTH_LONG).show();
 
-
+        //open main activity after finishing writing your friend
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public void reject(View view){
@@ -61,8 +56,5 @@ public class acceptFriend extends AppCompatActivity {
         startActivity(intent);
         finish();
         //reject friend and open MainActivity
-
     }
-
-
 }
