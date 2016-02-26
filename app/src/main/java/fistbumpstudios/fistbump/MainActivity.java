@@ -128,4 +128,11 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
+
+    public void openTab(View view){
+        Intent intent = new Intent(this, tabbedMain.class);
+        startActivity(intent);
+        finish();
+
+    }
 }
