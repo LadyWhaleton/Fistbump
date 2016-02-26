@@ -19,6 +19,7 @@ import java.io.IOException;
 
 public class setUserName extends AppCompatActivity {
     File userfile;
+    final public static String userFilename = "userInfo.txt";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,7 @@ public class setUserName extends AppCompatActivity {
 
         try {
             //userfile = new File("user_info.txt");
-            FileOutputStream fos = openFileOutput("user_info.txt", Context.MODE_PRIVATE);
+            FileOutputStream fos = openFileOutput(userFilename, Context.MODE_PRIVATE);
 
             //FileOutputStream fos = new FileOutputStream("user_info.txt");
             username = username +'\n';

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +32,8 @@ public class acceptFriend extends AppCompatActivity {
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             infoRaw = new String(message.getRecords()[0].getPayload());
+            Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
+
         }
     }
 
