@@ -56,14 +56,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Intent intent = getIntent();
-
-//        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-//            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
-//                    NfcAdapter.EXTRA_NDEF_MESSAGES);
-//
-//            NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
-            //mTextView.setText(new String(message.getRecords()[0].getPayload()));
-        //}
     }
 
     @Override
@@ -128,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
     }
-
     public void openTab(View view){
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
