@@ -16,6 +16,8 @@ import java.io.IOException;
 
 public class acceptFriend extends AppCompatActivity {
     String infoRaw;
+    final public static String friendFile = "friends.txt";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +42,13 @@ public class acceptFriend extends AppCompatActivity {
         String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
         obj.put("name", infoArray[0]);
-        obj.put("MAC Address", infoArray[1]);
+        obj.put("MACAddress", infoArray[1]);
         //create new json object and save to filesystem
 
 //        File dir = new File(Environment.getDataDirectory(), "FistBump");
 //        File file = new File(dir, "friends.txt");
 //        FileOutputStream fos = new FileOutputStream(file, true);
-        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE | MODE_APPEND);
+        FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
         fos.write(obj.toString().getBytes());
         fos.close();
 

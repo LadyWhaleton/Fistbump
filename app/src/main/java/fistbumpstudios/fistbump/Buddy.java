@@ -9,8 +9,8 @@ import android.net.Uri;
  */
 public class Buddy {
 
-    private String name, id;
-    private Uri profilePic;
+    public String name, id;
+    public Uri profilePic;
 
     Buddy (String name, String id, Uri image)
     {
