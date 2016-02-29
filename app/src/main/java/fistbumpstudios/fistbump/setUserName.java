@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,6 +19,7 @@ import java.io.IOException;
 
 public class setUserName extends AppCompatActivity {
     File userfile;
+    final public static String userFilename = "userInfo.txt";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +36,10 @@ public class setUserName extends AppCompatActivity {
     private void makeVerifyFile(String username){
 
         try {
-            File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-            userfile = new File(dir, "user_info.txt");
-            FileOutputStream fos = new FileOutputStream(userfile);
+            //userfile = new File("user_info.txt");
+            FileOutputStream fos = openFileOutput(userFilename, Context.MODE_PRIVATE);
+
+            //FileOutputStream fos = new FileOutputStream("user_info.txt");
             username = username +'\n';
             fos.write(username.getBytes());
             fos.write(getMAC().getBytes());
@@ -50,7 +51,6 @@ public class setUserName extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
     public void setUname (View view){
 
         EditText mEdit=(EditText)findViewById(R.id.username);
@@ -64,9 +64,8 @@ public class setUserName extends AppCompatActivity {
         Toast.makeText(this, "Set Username to " + uname ,
                 Toast.LENGTH_SHORT).show();
         makeVerifyFile(uname);
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
     }
-
 }

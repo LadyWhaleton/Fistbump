@@ -3,11 +3,9 @@ package fistbumpstudios.fistbump;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -21,9 +19,7 @@ import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
     private String mParentPath;
-    private Intent mIntent;
     private NfcAdapter nfcAdapter;
-    File userInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,14 +56,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         Intent intent = getIntent();
-
-        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
-            Parcelable[] rawMessages = intent.getParcelableArrayExtra(
-                    NfcAdapter.EXTRA_NDEF_MESSAGES);
-
-            NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
-            //mTextView.setText(new String(message.getRecords()[0].getPayload()));
-        }
     }
 
     @Override
@@ -83,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         // Get a string containing the file's parent directory
         return copiedFile.getParent();
     }
-
 
     private void incomingRequest() {
         Intent intent = getIntent();
@@ -132,5 +119,16 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+    }
+    public void openTab(View view){
+        Intent intent = new Intent(this, tabbedMain.class);
+        startActivity(intent);
+        finish();
+    }
+
+    public void openbuddylist(View view){
+        Intent intent = new Intent(this, Buddylist.class);
+        startActivity(intent);
+        finish();
     }
 }

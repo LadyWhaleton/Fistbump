@@ -1,14 +1,15 @@
 package fistbumpstudios.fistbump;
 
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,10 +18,13 @@ import java.io.IOException;
 
 public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback{
     NfcAdapter nfc;
+    private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_for_beam);
+        context = getApplicationContext();
         nfc = NfcAdapter.getDefaultAdapter(this);
         nfc.setNdefPushMessageCallback(this, this);
     }
@@ -33,20 +37,21 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         String message = "";
-        File dir = new File(Environment.getExternalStorageDirectory(), "FistBump");
-        File userfile = new File(dir, "user_info.txt");
+        String filepath =  context.getFilesDir() + "/" + setUserName.userFilename;
+        File userfile = new File(filepath);
         BufferedReader br = null;
+
         try {
             br = new BufferedReader(new FileReader(userfile));
             String line;
             while ((line = br.readLine()) != null) {
-                message += line +'\n';
+                message += line +";";
             }
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(this, "cannot find userinfo" , Toast.LENGTH_LONG).show();
         }
-
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
