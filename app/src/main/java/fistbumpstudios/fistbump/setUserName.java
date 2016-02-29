@@ -64,7 +64,7 @@ public class setUserName extends AppCompatActivity {
         Toast.makeText(this, "Set Username to " + uname ,
                 Toast.LENGTH_SHORT).show();
         makeVerifyFile(uname);
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
     }
