@@ -1,8 +1,10 @@
 package fistbumpstudios.fistbump;
 
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,6 +23,12 @@ import android.widget.TextView;
 
 public class tabbedMain extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private int[] tabIcons = {
+            R.drawable.ic_perm_media_pink_24dp,
+            R.drawable.ic_chat_pink_24dp,
+            R.drawable.ic_contacts_pink_24dp
+    };
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -44,6 +52,11 @@ public class tabbedMain extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        // add the tab icons
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -144,13 +157,14 @@ public class tabbedMain extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
+
             switch (position) {
                 case 0:
-                    return "Shared";
+                    return getString(R.string.title_tab_section1);
                 case 1:
-                    return "Messages";
+                    return getString(R.string.title_tab_section2);
                 case 2:
-                    return "Friends";
+                    return getString(R.string.title_tab_section3);
             }
             return null;
         }
