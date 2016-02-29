@@ -128,10 +128,10 @@ public class MainActivity extends AppCompatActivity {
             copy_Byte_Array(bytes, int_To_Byte_Array(text_length), 8, 4);
             String what = "";
 
-            for (int i = 0; i < 12; ++i)
-                display_message(String.valueOf(bytes[i]));
+            //for (int i = 0; i < 12; ++i)
+                //display_message(String.valueOf(bytes[i]));
 
-            display_message(name + text);
+            //display_message(name + text);
 
             for (Socket clientSocket : clientSockets) {
                 try {
@@ -150,6 +150,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void send_file_button_press(View view) {
+        if (!clientSockets.isEmpty()) {
+            int option = 2;
+
+            String name = "test.jpg";
+            int name_length = name.length();
+            File file = new File(Environment.getExternalStorageDirectory()
+                    .getAbsolutePath() + File.separator + name);
+            // Get the size of the file
+            int file_length = (int)file.length();
+            if (file_length == 0)
+            {
+                display_message("woops, no file\n");
+                return;
+            }
+            display_message(String.valueOf(file_length) + "\n");
+            byte bytes[] = new byte[1024];
+            copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+            copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+            copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
+
+            //for (int i = 0; i < 12; ++i)
+            //display_message(String.valueOf(bytes[i]));
+
+            //display_message(name + text);
+
+            for (Socket clientSocket : clientSockets) {
+                try {
+
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    outputStream.write(bytes, 0, 12);
+                    outputStream.write(name.getBytes());
+
+                    InputStream in = new FileInputStream(file);
+
+                    int count;
+                    int bytes_sent = 0;
+                    while ((count = in.read(bytes)) > 0) {
+                        outputStream.write(bytes, 0, count);
+                        bytes_sent += count;
+                    }
+                    display_message(String.valueOf(bytes_sent) + "\n");
+
+
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         //if (clientFileSocket != null && input_area.getText().length() > 0)
         //{
             //try {
@@ -218,12 +267,10 @@ public class MainActivity extends AppCompatActivity {
 
         private Socket clientSocket;
         private byte[] buffer = new byte[1024];
-        private int buffer_to_int(byte[] buf, int offset)
+        private int buffer_to_int(byte[] bytes, int offset)
         {
-            int ret = 0;
-            for (int i = offset; i < offset + 4; ++i)
-                ret += buf[i] << 4 * (3 - i);
-            return ret;
+            return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16)
+                    | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
         }
 
         public CommunicationThread(Socket clientSocket) {
@@ -243,113 +290,71 @@ public class MainActivity extends AppCompatActivity {
                     InputStream is = this.clientSocket.getInputStream();
                     //ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                     int bytesread;
+                    String what = "";
 
 
                     bytesread = is.read(buffer, 0, 4);
                     int option = buffer_to_int(buffer, 0);
+                    for (int i = 0; i < bytesread; ++i)
+                      what += buffer[i] + ".";
+                    what += " ";
 
                     bytesread = is.read(buffer, 0, 4);
                     int name_size = buffer_to_int(buffer, 0);
+                    for (int i = 0; i < bytesread; ++i)
+                        what += buffer[i] + ".";
+                    what += " ";
 
                     bytesread = is.read(buffer, 0, 4);
                     int text_size = buffer_to_int(buffer, 0);
-
-                    display_message(option + " " + name_size + " " + text_size + "\n");
+                    for (int i = 0; i < bytesread; ++i)
+                        what += buffer[i] + ".";
+                    what += "\n";
+                    display_message(what);
 
                     byte name_byte_arr[] = new byte [name_size];
                     bytesread = is.read(name_byte_arr, 0, name_size);
 
                     String name = new String(name_byte_arr, "UTF-8");
-                    display_message(name + "\n");
 
-                    byte text_byte_arr[] = new byte [text_size];
-                    bytesread = is.read(text_byte_arr, 0, text_size);
+                    if (option == 1)
+                    {
+                        byte text_byte_arr[] = new byte [text_size];
+                        bytesread = is.read(text_byte_arr, 0, text_size);
 
-                    String text = new String(text_byte_arr, "UTF-8");
-                    display_message(text + "\n");
+                        String text = new String(text_byte_arr, "UTF-8");
+                        display_message(name + ": " + text + "\n");
+                    }
+                    else if (option == 2)
+                    {
+                        byte file_buffer[] = new byte[1024];
 
+                        File file = new File(Environment.getExternalStorageDirectory(), name);
 
-                    //bytesread = is.read(buffer, 0, text_size);
-                    //display_message(String.valueOf(bytesread) + "\n");
+                        FileOutputStream fileOutputStream = new FileOutputStream(file);
+                        int bytes_read_so_far = 0;
+                        int bytes_read_this_loop = 0;
+                        while (bytes_read_so_far < text_size) {
+                            bytes_read_this_loop = is.read(file_buffer, 0, Math.min(text_size - bytes_read_so_far, 1024));
+                            bytes_read_so_far += bytes_read_this_loop;
+                            fileOutputStream.write(file_buffer, 0, bytes_read_this_loop);
+                        }
+                        display_message(text_size + "\n");
 
-
-                    //String what = "";
-
-
+                        display_message("Made a file called " + name + " of size " + bytes_read_so_far + "\n");
+                    }
+                    else
+                    {
+                        display_message("Something weird happened\n");
+                        return;
+                    }
 
                     //for (int i = 0; i < bytesread; ++i)
                       //  what += (char)buffer[i];
 
                     //display_message(what + "\n");
 
-
-
-
-
-
-                    //}
-                    /*
-                    InputStream is = this.clientSocket.getInputStream();
-
-                    byte[] buffer = new byte[1024];
-                    ByteBuffer byteBuffer;
-                    int name_length = 0;
-                    int text_length = 0;
-                    String name;
-                    String text;
-                    boolean is_msg = false;
-                    boolean is_file = false;
-
-                    int bytesRead;
-                    bytesRead = is.read(buffer, 0, 4);
-                    if (bytesRead == 4) {
-                        byteBuffer = ByteBuffer.wrap(buffer, 0, 4);
-                        switch (byteBuffer.getInt(0)) {
-                            case 0:
-                                is_msg = true;
-                            default:
-                                //IOException e = new IOException();
-                                //throw e;
-                        }
-                    } else {
-                        IOException e = new IOException();
-                        throw e;
-                    }
-                    bytesRead = is.read(buffer, 0, 4);
-                    if (bytesRead == 4) {
-                        byteBuffer = ByteBuffer.wrap(buffer, 0, 4);
-                        name_length = byteBuffer.getInt(0);
-                    } else {
-                        IOException e = new IOException();
-                        throw e;
-                    }
-                    bytesRead = is.read(buffer, 0, 4);
-                    if (bytesRead == 4) {
-                        byteBuffer = ByteBuffer.wrap(buffer, 0, 4);
-                        text_length = byteBuffer.getInt(0);
-                    } else {
-                        IOException e = new IOException();
-                        throw e;
-                    }
-                    bytesRead = is.read(buffer, 0, name_length);
-                    if (bytesRead == name_length) {
-                        name = buffer.toString();
-                    } else {
-                        IOException e = new IOException();
-                        throw e;
-                    }
-                    bytesRead = is.read(buffer, 0, text_length);
-                    if (bytesRead == text_length) {
-                        text = buffer.toString();
-                    } else {
-                        IOException e = new IOException();
-                        throw e;
-                    }
-                    if (is_msg)
-                        display_message(name + ": " + text + "\n");
-
-
-                */}
+                }
             } catch (IOException e) {
                 e.printStackTrace();
                 display_message("something messed up yo\n");
@@ -373,10 +378,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 String savedAs = "WDFL_File_" + System.currentTimeMillis() + ".txt";
-                File file = new File(
-                        Environment.getExternalStorageDirectory(),
-                        savedAs);
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
+
                 InputStream is = this.clientSocket.getInputStream();
 
                 byte[] buffer = new byte[1024];
