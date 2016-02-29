@@ -8,6 +8,7 @@ import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
@@ -16,7 +17,9 @@ import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +36,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     public static WifiP2pManager.PeerListListener myPeerListListener;
     private Set<String> connected_devices = new HashSet<String>();
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
+    private boolean connect_flag;
 
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, MainActivity activity)
     {
@@ -55,8 +59,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             // Out with the old, in with the new.
             peers.clear();
             peers.addAll(peerList.getDeviceList());
-
-
         }
     };
 
@@ -66,6 +68,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             // InetAddress from WifiP2pInfo struct.
             InetAddress groupOwnerAddress = info.groupOwnerAddress;
+            activity.display_message("When is this called?\n");
 
             // After the group negotiation, we can determine the group owner.
             if (info.groupFormed && info.isGroupOwner) {
@@ -84,10 +87,31 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         }
     };
 
-    public WifiP2pManager.PeerListListener returnPeerListListener()
-    {
-        return myPeerListListener;
-    }
+    private WifiP2pManager.GroupInfoListener groupInfoListener = new WifiP2pManager.GroupInfoListener( ) {
+        @Override
+        public void onGroupInfoAvailable(final WifiP2pGroup group) {
+            connected_devices.clear();
+            //activity.display_message("When the hell is this called?\n");
+            if (group == null)
+                return;
+            Collection<WifiP2pDevice> grouplist = group.getClientList();
+            if (group.isGroupOwner())
+                for (WifiP2pDevice device : grouplist)
+                    connected_devices.add(device.deviceAddress);
+            else
+            {
+                connected_devices.add(group.getOwner().deviceAddress);
+                for (WifiP2pDevice device : grouplist)
+                    connected_devices.add(device.deviceAddress);
+            }
+
+        }
+    };
+
+    //public WifiP2pManager.PeerListListener returnPeerListListener()
+    //{
+    //    return myPeerListListener;
+    //}
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -95,53 +119,61 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         //Toast.makeText(context, "Wifi p2p is enabled.", Toast.LENGTH_SHORT).show();
         if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
             // Check to see if Wi-Fi is enabled and notify appropriate activity
-            Toast.makeText(context, "Wifi p2p is enabled.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Wifi p2p is enabled.", Toast.LENGTH_SHORT).show();
         } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
             // Call WifiP2pManager.requestPeers() to get a list of current peers
             if (mManager != null)
             {
                 mManager.requestPeers(mChannel, peerListListener);
 
-                if (peers.size() > 0)
+                for (int i = 0; i < peers.size(); ++i)
                 {
-                    final  WifiP2pDevice device = peers.get(0);
+                    final WifiP2pDevice device = peers.get(i);
                     if (!connected_devices.contains(device.deviceAddress)) {
                         WifiP2pConfig config = new WifiP2pConfig();
                         config.deviceAddress = device.deviceAddress;
                         config.wps.setup = WpsInfo.PBC;
+                        connect_flag = false;
                         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
                             @Override
                             public void onSuccess() {
                                 //success logic
-                                String msg = "I have connected with ";
-                                msg += device.deviceName;
-                                msg += " with MAC: ";
-                                msg += device.deviceAddress;
-                                msg += "\n";
-                                activity.display_message(msg);
-                                connected_devices.add(device.deviceAddress);
+                                //String msg = "I have connected with ";
+                                //msg += device.deviceName;
+                                //msg += " with MAC: ";
+                                //msg += device.deviceAddress;
+                                //msg += "\n";
+                                //activity.display_message(msg);
+                                connect_flag = true;
+                                //connected_devices.add(device.deviceAddress);
                             }
 
                             @Override
                             public void onFailure(int reason) {
                                 //failure logic
-                                activity.display_message("I have failed to connected!\n");
+                                //activity.display_message("I have failed to connected!\n");
                             }
                         });
+                        if (connect_flag)
+                            break;
                     }
                 }
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
             NetworkInfo networkState = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
-            //activity.display_message("UHJGHGHGHHGG1!\n");
+
             if(networkState.isConnected())
             {
-                mManager.requestConnectionInfo(mChannel, connectionInfoListener);
+                if (connected_devices.isEmpty()) {
+                    mManager.requestGroupInfo(mChannel, groupInfoListener); // makes connected_devices list
+                    mManager.requestConnectionInfo(mChannel, connectionInfoListener); // establishes sockets
+                }
+                else
+                    mManager.requestGroupInfo(mChannel, groupInfoListener); // makes connected_devices list
             }
             else
             {
-                //activity.display_message("UHJGHGHGHHGG2!\n");
                 connected_devices.clear();
             }
 
