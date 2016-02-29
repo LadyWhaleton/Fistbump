@@ -1,8 +1,8 @@
 package fistbumpstudios.fistbump;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -54,15 +54,15 @@ public class tabbedMain extends AppCompatActivity {
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(fab.getContext(), WifiDirect.class);
+                startActivity(intent);
+                finish();
             }
         });
-
     }
 
 
@@ -135,6 +135,10 @@ public class tabbedMain extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            if(position == 1){
+                return new messagesTab();
+            }
+
             if(position == 2){
                 return new tab_list_buddies();
             }

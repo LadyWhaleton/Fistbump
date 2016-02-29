@@ -1,4 +1,4 @@
-package fistbumpstudios.wifidirecttransfer;
+package fistbumpstudios.fistbump;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,7 +24,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class MainActivity extends AppCompatActivity {
+public class WifiDirect extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
     WifiP2pManager mManager;
     WifiP2pManager.Channel mChannel;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_wifi_direct);
         message_area = (TextView) findViewById(R.id.message_area);
         input_area = (TextView) findViewById(R.id.input_area);
 
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             String what = "";
 
             //for (int i = 0; i < 12; ++i)
-                //display_message(String.valueOf(bytes[i]));
+            //display_message(String.valueOf(bytes[i]));
 
             //display_message(name + text);
 
@@ -248,8 +248,8 @@ public class MainActivity extends AppCompatActivity {
                 while(!Thread.currentThread().isInterrupted()) {
 
 
-                     //String read = inputStream.readUTF();
-                     //display_message(read);
+                    //String read = inputStream.readUTF();
+                    //display_message(read);
                     InputStream is = this.clientSocket.getInputStream();
                     //ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
                     int bytesread;
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                     bytesread = is.read(buffer, 0, 4);
                     int option = buffer_to_int(buffer, 0);
                     for (int i = 0; i < bytesread; ++i)
-                      what += buffer[i] + ".";
+                        what += buffer[i] + ".";
                     what += " ";
 
                     bytesread = is.read(buffer, 0, 4);
@@ -311,12 +311,6 @@ public class MainActivity extends AppCompatActivity {
                         display_message("Something weird happened\n");
                         return;
                     }
-
-                    //for (int i = 0; i < bytesread; ++i)
-                      //  what += (char)buffer[i];
-
-                    //display_message(what + "\n");
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -368,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void display_message(String message) {
         final String msg = message;
-        MainActivity.this.runOnUiThread(new Runnable() {
+        WifiDirect.this.runOnUiThread(new Runnable() {
 
 
             @Override
