@@ -1,5 +1,6 @@
 package fistbumpstudios.fistbump;
 
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -17,10 +18,13 @@ import java.io.IOException;
 
 public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback{
     NfcAdapter nfc;
+    private static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wait_for_beam);
+        context = getApplicationContext();
         nfc = NfcAdapter.getDefaultAdapter(this);
         nfc.setNdefPushMessageCallback(this, this);
     }
@@ -33,7 +37,8 @@ public class WaitForBeam extends AppCompatActivity implements NfcAdapter.CreateN
     @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
         String message = "";
-        File userfile = new File("user_info.txt");
+        String filepath =  context.getFilesDir() + "/" + setUserName.userFilename;
+        File userfile = new File(filepath);
         BufferedReader br = null;
 
         try {

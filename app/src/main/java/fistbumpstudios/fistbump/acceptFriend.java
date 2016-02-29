@@ -1,4 +1,5 @@
 package fistbumpstudios.fistbump;
+
 import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
@@ -7,15 +8,19 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class acceptFriend extends AppCompatActivity {
     String infoRaw;
+    final public static String friendFile = "friends.txt";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +36,8 @@ public class acceptFriend extends AppCompatActivity {
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             infoRaw = new String(message.getRecords()[0].getPayload());
+            Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
+
         }
     }
 
@@ -40,10 +47,11 @@ public class acceptFriend extends AppCompatActivity {
         obj.put("name", infoArray[0]);
         obj.put("MAC Address", infoArray[1]);
         //create new json object and save to filesystem
-
-        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE);
-        fos.write(obj.toString().getBytes());
-        fos.close();
+        FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        out.append(obj.toString());
+        out.append(System.getProperty("line.separator"));
+        out.flush();
 
         //open main activity after finishing writing your friend
         Intent intent = new Intent(this, MainActivity.class);

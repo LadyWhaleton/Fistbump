@@ -1,8 +1,8 @@
 package fistbumpstudios.fistbump;
 
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -12,10 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -33,9 +34,10 @@ public class Buddylist extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_buddylist);
-
         Buddies = new ArrayList<>();
         buddylistView = (ListView) findViewById(R.id.listView);
+        LoadBuddies();
+
 
     }
 
@@ -45,41 +47,33 @@ public class Buddylist extends AppCompatActivity {
     {
         try {
             String Message;
-            FileInputStream fis = openFileInput("userBuddyList");
+            FileInputStream fis = openFileInput(acceptFriend.friendFile);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
             StringBuffer sb = new StringBuffer();
 
             while ( (Message = br.readLine()) != null)
             {
-                sb.append(Message + "'n");
+                JSONObject obj = new JSONObject(Message);
+                jsonToBuddy(obj);
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Json is unreadable!", Toast.LENGTH_LONG).show();
         }
+
+        LiveUpdateBuddies();
     }
 
-    // Store Buddies to internal device storage
-    private void StoreBuddies()
-    {
-        String msg = "Buddies";
-        String fileName = "userBuddyList";
-
-        // try to open the file, then write, then close
-        try {
-            FileOutputStream fos = openFileOutput (fileName, MODE_PRIVATE);
-            fos.write (msg.getBytes());
-            fos.close();
-            Toast.makeText(getApplicationContext(), "Buddylist stored", Toast.LENGTH_SHORT).show();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void jsonToBuddy(JSONObject obj) throws JSONException {
+        Uri profilePic = Uri.parse("http://orig06.deviantart.net/1722/f/2009/346/0/d/wailord_by_xous54.png");
+        addBuddy(obj.getString("name"), obj.getString("MACAddress"), profilePic);
+        //Toast.makeText(this,  obj.getString("MACAddress"), Toast.LENGTH_LONG).show();
     }
+
 
     // update buddies (while in App)
     private void LiveUpdateBuddies()
