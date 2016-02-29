@@ -1,6 +1,7 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -197,9 +198,11 @@ public class tab_list_buddies extends Fragment {
             TextView macAddr = (TextView) view.findViewById(R.id.MacAddress);
             macAddr.setText(currentBuddy.getID());
 
-            // Profile pic
+
             ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
-            pic.setImageURI(currentBuddy.getProficPic());
+            Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
+            pic.setImageDrawable(myDrawable);
+                        //pic.setImageURI(currentBuddy.getProficPic());
             return view;
         }
     }
