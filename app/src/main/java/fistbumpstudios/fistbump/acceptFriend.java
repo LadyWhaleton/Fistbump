@@ -9,13 +9,18 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class acceptFriend extends AppCompatActivity {
     String infoRaw;
+    final public static String friendFile = "friends.txt";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,13 +47,11 @@ public class acceptFriend extends AppCompatActivity {
         obj.put("name", infoArray[0]);
         obj.put("MAC Address", infoArray[1]);
         //create new json object and save to filesystem
-
-//        File dir = new File(Environment.getDataDirectory(), "FistBump");
-//        File file = new File(dir, "friends.txt");
-//        FileOutputStream fos = new FileOutputStream(file, true);
-        FileOutputStream fos = openFileOutput("friends.txt", Context.MODE_PRIVATE | MODE_APPEND);
-        fos.write(obj.toString().getBytes());
-        fos.close();
+        FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        out.append(obj.toString());
+        out.append(System.getProperty("line.separator"));
+        out.flush();
 
         //open main activity after finishing writing your friend
         Intent intent = new Intent(this, MainActivity.class);

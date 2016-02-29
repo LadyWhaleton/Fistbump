@@ -124,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
+    }
 
+    public void openbuddylist(View view){
+        Intent intent = new Intent(this, Buddylist.class);
+        startActivity(intent);
+        finish();
     }
 }
