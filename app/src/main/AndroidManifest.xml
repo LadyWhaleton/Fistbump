@@ -74,16 +74,18 @@
         <activity android:name=".acceptFriend">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
         <activity
             android:name=".tabbedMain"
             android:label="@string/title_activity_tabbed_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".WifiDirect">
+
+        </activity>
     </application>
 
 </manifest>
