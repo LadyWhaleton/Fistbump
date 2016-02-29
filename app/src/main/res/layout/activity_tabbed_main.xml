@@ -25,17 +25,19 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <Button
+            <ImageButton
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/ic_person_add_pink_36dp" />
+                android:src="@drawable/ic_menu_pink_24dp"
+                android:background="?android:selectableItemBackground"/>
 
-            <Button
+            <ImageButton
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="end"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:background="@drawable/ic_person_add_pink_36dp" />
+                android:src="@drawable/ic_person_add_pink_36dp"
+                android:background="?android:selectableItemBackground" />
 
         </android.support.v7.widget.Toolbar>
 
