@@ -7,8 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +36,7 @@ public class tab_list_buddies extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private ListView mListView;
     List<Buddy> Buddies;
     ListView buddylistView;
 
@@ -66,7 +76,7 @@ public class tab_list_buddies extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        Buddies = new ArrayList<>();
+
     }
 
     @Override
@@ -80,8 +90,10 @@ public class tab_list_buddies extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        buddylistView = (ListView) getView().findViewById(R.id.listView);
         super.onActivityCreated(savedInstanceState);
+        Buddies = new ArrayList<>();
+        buddylistView = (ListView) getView().findViewById(R.id.listView);
+        LoadBuddies();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -106,20 +118,89 @@ public class tab_list_buddies extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
+    private void LoadBuddies()
+    {
+        try {
+            String Message;
+            FileInputStream fis = getActivity().openFileInput(acceptFriend.friendFile);
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuffer sb = new StringBuffer();
 
+            while ( (Message = br.readLine()) != null)
+            {
+                JSONObject obj = new JSONObject(Message);
+                jsonToBuddy(obj);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        LiveUpdateBuddies();
+    }
+
+    private void jsonToBuddy(JSONObject obj) throws JSONException {
+        Uri profilePic = Uri.parse("http://orig06.deviantart.net/1722/f/2009/346/0/d/wailord_by_xous54.png");
+        addBuddy(obj.getString("name"), obj.getString("MACAddress"), profilePic);
+        //Toast.makeText(this,  obj.getString("MACAddress"), Toast.LENGTH_LONG).show();
+    }
+
+    // Implementation question: Should we update the database right after adding?
+    private void addBuddy(String name, String id, Uri pic)
+    {
+        Buddies.add(new Buddy(name, id, pic));
+    }
+
+
+    // update buddies (while in App)
+    private void LiveUpdateBuddies()
+    {
+        ArrayAdapter<Buddy> buddyAdapter = new BuddyListAdapter(getActivity());
+        buddylistView.setAdapter(buddyAdapter);
+    }
+
+
+    private class BuddyListAdapter  extends ArrayAdapter<Buddy>
+    {
+        public BuddyListAdapter(Context context)
+        {
+            super(context,R.layout.listview_buddy_info, Buddies);
+        }
+
+        @Override
+        public View getView (int position, View view, ViewGroup parent)
+        {
+
+            // if there's no instance of this view
+            if (view == null){
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                view = inflater.inflate(R.layout.listview_buddy_info, parent, false);
+
+            }
+
+            Buddy currentBuddy = Buddies.get(position);
+
+            // select the TextView variable to be modified
+            TextView name = (TextView) view.findViewById(R.id.BuddyName);
+
+            // set the actual TextView variable to the Buddy's name
+            name.setText(currentBuddy.getName());
+
+            // do the same for the other fields
+            TextView macAddr = (TextView) view.findViewById(R.id.MacAddress);
+            macAddr.setText(currentBuddy.getID());
+
+            // Profile pic
+            ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
+            pic.setImageURI(currentBuddy.getProficPic());
+            return view;
+        }
+    }
 }
