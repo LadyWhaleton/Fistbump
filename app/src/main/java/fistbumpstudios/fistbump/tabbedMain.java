@@ -1,11 +1,13 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Context;
+import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -60,15 +62,37 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
 
         nfc = NfcAdapter.getDefaultAdapter(this);
-
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            if(checkForNFC())
                 nfc.setNdefPushMessageCallback(tabbedMain.this, tabbedMain.this);
             }
         });
     }
+
+    boolean checkForNFC() {
+        if( nfc == null){
+            Toast.makeText(this, "No NFC available",
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        else if (!nfc.isEnabled()) {
+            Toast.makeText(this, "Please enable NFC.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFC_SETTINGS));
+            return false;
+        } else if (!nfc.isNdefPushEnabled()) {
+            Toast.makeText(this, "Please enable Android Beam.",
+                    Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(Settings.ACTION_NFCSHARING_SETTINGS));
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
