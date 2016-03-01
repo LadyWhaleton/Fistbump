@@ -83,9 +83,11 @@ public class Buddylist extends AppCompatActivity {
     }
 
     // Implementation question: Should we update the database right after adding?
-    private void addBuddy(String name, String id, Uri pic)
+    public void addBuddy(String name, String id, Uri pic)
     {
         Buddies.add(new Buddy (name, id, pic));
+        LiveUpdateBuddies();
+
     }
 
     private class BuddyListAdapter  extends ArrayAdapter<Buddy>
