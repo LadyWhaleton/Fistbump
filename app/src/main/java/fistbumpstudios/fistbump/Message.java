@@ -24,7 +24,6 @@ public class Message {
         this.id = author.getID();
         this.profilePic = author.getProficPic();
         this.timeCreated = timeCreated;
-
     }
 
     public String getSenderName()

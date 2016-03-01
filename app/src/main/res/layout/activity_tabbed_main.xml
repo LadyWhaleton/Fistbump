@@ -25,6 +25,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+            <!-- Toolbar icons
             <ImageButton
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -38,6 +39,7 @@
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_person_add_pink_36dp"
                 android:background="?android:selectableItemBackground" />
+                -->
 
         </android.support.v7.widget.Toolbar>
 

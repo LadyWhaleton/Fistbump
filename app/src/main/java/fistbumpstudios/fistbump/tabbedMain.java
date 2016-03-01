@@ -30,9 +30,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     Context context;
 
     private int[] tabIcons = {
-            R.drawable.ic_perm_media_pink_24dp,
+            R.drawable.ic_contacts_pink_24dp,
             R.drawable.ic_chat_pink_24dp,
-            R.drawable.ic_contacts_pink_24dp
+            R.drawable.ic_perm_media_pink_24dp
     };
     private ViewPager mViewPager;
 
@@ -100,16 +100,12 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         @Override
         public Fragment getItem(int position) {
 
-            if(position == 0){
-                return new messagesTab();
-            }
-
-            if(position == 1){
-                return new messagesTab();
-            }
-
-            if(position == 2){
-                return new tab_list_buddies();
+            switch(position)
+            {
+                case 0:
+                    return new tab_list_buddies();
+                case 1:
+                    return new messagesTab();
             }
 
             return null;
