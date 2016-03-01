@@ -65,7 +65,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:src="@drawable/ic_person_add_white_24dp"
+        app:backgroundTint="@color/colorPrimary"
+        android:tint="@color/pink" />
 
 </android.support.design.widget.CoordinatorLayout>
 

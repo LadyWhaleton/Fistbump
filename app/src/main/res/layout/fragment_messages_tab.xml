@@ -18,6 +18,12 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/no_messages"
         android:id="@+id/emptyMessagelistView"
-        android:layout_gravity="center" />
+        android:layout_marginTop="225dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="fill_horizontal"
+        android:layout_gravity="center_horizontal"
+        android:alpha=".40"
+        android:textStyle="bold" />
 
 </FrameLayout>

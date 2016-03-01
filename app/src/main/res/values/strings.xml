@@ -16,8 +16,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="no_files">Your friends haven\'t shared anything</string>
-    <string name="no_messages">You have no messages</string>
-    <string name="no_friends">You have no friends :(</string>
+    <string name="no_files">Your friends haven\'t shared anything.</string>
+    <string name="no_messages">You have no messages.</string>
+    <string name="no_friends">You have no friends. :(</string>
 
 </resources>
