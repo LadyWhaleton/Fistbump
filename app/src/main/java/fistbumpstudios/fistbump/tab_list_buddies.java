@@ -38,7 +38,7 @@ public class tab_list_buddies extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private ListView mListView;
-    List<Buddy> Buddies;
+    public static List<Buddy> Buddies;
     ListView buddylistView;
 
 
