@@ -1,5 +1,7 @@
 package fistbumpstudios.fistbump;
 
+import android.net.Uri;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,17 +11,41 @@ import java.util.Date;
  */
 public class Message {
 
-    public String name;
-    public String id;
-    public String msg;
-    public String timeCreated;
+    private String name;
+    private String id;
+    private Uri profilePic;
+    private String body;
+    private String timeCreated;
 
-    Message(String n, String i, String m){
-        DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
-        timeCreated = df.format(new Date());
-        name = n;
-        id = i;
-        msg = m;
+    Message(Buddy author, String body, String timeCreated){
+        //DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+        // timeCreated = df.format(new Date());
+        this.name = author.getName();
+        this.id = author.getID();
+        this.profilePic = author.getProficPic();
+        this.timeCreated = timeCreated;
+
+    }
+
+    public String getSenderName()
+    {
+        return this.name;
+    }
+    public String getSenderID()
+    {
+        return this.id;
+    }
+    public Uri getSenderPic()
+    {
+        return this.profilePic;
+    }
+    public String getMessageBody()
+    {
+        return this.body;
+    }
+    public String getTimeStamp()
+    {
+        return this.timeCreated;
     }
 
 }
