@@ -42,6 +42,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed_main);
+
+        //check if user already made a profile
+
+
         context = getApplicationContext();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
