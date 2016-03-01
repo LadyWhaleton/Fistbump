@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -37,9 +38,12 @@ public class tab_list_buddies extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    boolean BuddylistChanged;
     private ListView mListView;
     public static List<Buddy> Buddies;
     ListView buddylistView;
+    TextView emptyListView;
 
 
     // TODO: Rename and change types of parameters
@@ -93,8 +97,16 @@ public class tab_list_buddies extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Buddies = new ArrayList<>();
-        buddylistView = (ListView) getView().findViewById(R.id.listView);
+        buddylistView = (ListView) getView().findViewById(R.id.buddylistView);
+        emptyListView = (TextView) getView().findViewById(R.id.emptyBuddylistView);
         LoadBuddies();
+
+        if(Buddies.isEmpty()){
+            buddylistView.setEmptyView(emptyListView);
+        }
+
+
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -144,7 +156,10 @@ public class tab_list_buddies extends Fragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        LiveUpdateBuddies();
+
+
+        if (!Buddies.isEmpty())
+            LiveUpdateBuddies();
     }
 
     private void jsonToBuddy(JSONObject obj) throws JSONException {
@@ -163,6 +178,7 @@ public class tab_list_buddies extends Fragment {
     // update buddies (while in App)
     private void LiveUpdateBuddies()
     {
+
         ArrayAdapter<Buddy> buddyAdapter = new BuddyListAdapter(getActivity());
         buddylistView.setAdapter(buddyAdapter);
     }
@@ -183,7 +199,6 @@ public class tab_list_buddies extends Fragment {
             if (view == null){
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 view = inflater.inflate(R.layout.listview_buddy_info, parent, false);
-
             }
 
             Buddy currentBuddy = Buddies.get(position);

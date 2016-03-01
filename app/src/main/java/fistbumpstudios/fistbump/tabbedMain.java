@@ -21,9 +21,9 @@ public class tabbedMain extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private int[] tabIcons = {
-            R.drawable.ic_perm_media_pink_24dp,
+            R.drawable.ic_contacts_pink_24dp,
             R.drawable.ic_chat_pink_24dp,
-            R.drawable.ic_contacts_pink_24dp
+            R.drawable.ic_perm_media_pink_24dp
     };
 
     /**
@@ -135,14 +135,14 @@ public class tabbedMain extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if(position == 1){
-                return new messagesTab();
-            }
 
-            if(position == 2){
-                return new tab_list_buddies();
+            switch(position)
+            {
+                case 0:
+                    return new tab_list_buddies();
+                case 1:
+                    return new messagesTab();
             }
-
 
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).

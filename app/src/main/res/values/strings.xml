@@ -9,9 +9,9 @@
     <string name="beamPrompt">Place your friend\'s phone back to back\n Press \"Push to Beam\" when prompted</string>
     <string name="title_activity_wait_for_beam">WaitForBeam</string>
     <string name="title_activity_tabbed_main">tabbedMain</string>
-    <string name="title_tab_section1">Shared</string>
+    <string name="title_tab_section1">Friends</string>
     <string name="title_tab_section2">Messages</string>
-    <string name="title_tab_section3">Friends</string>
+    <string name="title_tab_section3">Shared</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
     <!-- TODO: Remove or change this placeholder text -->
