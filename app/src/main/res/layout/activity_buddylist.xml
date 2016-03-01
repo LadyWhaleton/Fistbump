@@ -24,6 +24,9 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/no_friends"
         android:id="@+id/emptyBuddylistView"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_marginTop="210dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:alpha=".40"
+        android:textStyle="bold"/>
 </RelativeLayout>
