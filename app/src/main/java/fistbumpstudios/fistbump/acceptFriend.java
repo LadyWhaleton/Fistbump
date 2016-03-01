@@ -63,6 +63,5 @@ public class acceptFriend extends AppCompatActivity {
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
-        //reject friend and open MainActivity
     }
 }

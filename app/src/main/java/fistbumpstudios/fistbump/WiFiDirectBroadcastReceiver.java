@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import fistbumpstudios.fistbump.MainActivity;
 
 /**
  * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
