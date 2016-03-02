@@ -43,6 +43,16 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed_main);
         context = getApplicationContext();
+
+        //check if user already made a profile
+        if(checkNewUser())
+        {
+            //if new user, then open setusername activity
+            Intent intent = new Intent(this, setUserName.class);
+            startActivity(intent);
+            finish();
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -72,7 +82,17 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         });
     }
 
-    boolean checkForNFC() {
+    private boolean checkNewUser(){
+        String path = context.getFilesDir().getAbsolutePath()+"/"+ setUserName.userFilename;
+        File file = new File ( path );
+        if ( file.exists() )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean checkForNFC() {
         if( nfc == null){
             Toast.makeText(this, "No NFC available",
                     Toast.LENGTH_SHORT).show();
