@@ -12,14 +12,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class setUserName extends AppCompatActivity {
-    File userfile;
+
+
     final public static String userFilename = "userInfo.txt";
+    private static int RESULT_LOAD_IMAGE = 1;
+    String picturePath = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,18 +42,15 @@ public class setUserName extends AppCompatActivity {
             FileOutputStream fos = openFileOutput(userFilename, Context.MODE_PRIVATE);
 
             //FileOutputStream fos = new FileOutputStream("user_info.txt");
-            username = username +'\n';
-            fos.write(username.getBytes());
-            fos.write(getMAC().getBytes());
+            fos.write((username + "\n").getBytes());
+            fos.write((getMAC()).getBytes());
             fos.close();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    public void setUname (View view){
+    public void verifyUsername(View view){
 
         EditText mEdit=(EditText)findViewById(R.id.username);
         String uname = mEdit.getText().toString();
@@ -61,11 +60,10 @@ public class setUserName extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
-        Toast.makeText(this, "Set Username to " + uname ,
-                Toast.LENGTH_SHORT).show();
         makeVerifyFile(uname);
-        Intent intent = new Intent(this, tabbedMain.class);
+        Intent intent = new Intent(this, setProfilePic.class);
         startActivity(intent);
         finish();
     }
+
 }

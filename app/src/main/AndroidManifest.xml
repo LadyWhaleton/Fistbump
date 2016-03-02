@@ -25,24 +25,25 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".setUserName"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-
         <activity android:name=".acceptFriend">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
@@ -50,10 +51,8 @@
             android:name=".tabbedMain"
             android:label="@string/title_activity_tabbed_main"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
-            android:name=".WifiDirect">
-        </activity>
+        <activity android:name=".WifiDirect"></activity>
+        <activity android:name=".setProfilePic"></activity>
     </application>
 
 </manifest>
