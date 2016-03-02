@@ -2,6 +2,7 @@ package fistbumpstudios.fistbump;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -41,6 +43,9 @@ public class acceptFriend extends AppCompatActivity {
         }
     }
 
+
+
+
     public void accept(View view) throws JSONException, IOException {
         String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
@@ -54,15 +59,14 @@ public class acceptFriend extends AppCompatActivity {
         out.flush();
 
         //open main activity after finishing writing your friend
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
     }
 
     public void reject(View view){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
-        //reject friend and open MainActivity
     }
 }

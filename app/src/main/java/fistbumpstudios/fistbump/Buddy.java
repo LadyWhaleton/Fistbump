@@ -14,6 +14,7 @@ public class Buddy {
     private String statusMessage;
     private boolean onlineStatus;
 
+
     Buddy (String name, String id, Uri image)
     {
         this.name = name;
