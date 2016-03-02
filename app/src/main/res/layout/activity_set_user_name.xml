@@ -7,52 +7,44 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     >
-
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select Profile Picture"
-        android:id="@+id/picSelectButton"
-        android:onClick="selectProfilePic"
-        android:layout_below="@+id/profilePreview"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="26dp" />
-
-    <ImageView
-        android:layout_width="200dp"
-        android:layout_height="130dp"
-        android:id="@+id/profilePreview"
-        android:src="@drawable/placeholder"
-        android:layout_below="@+id/unameButton"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="30dp" />
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:text="Set Username"
-        android:onClick="verifyFields"
-        android:id="@+id/unameButton"
-        android:layout_below="@+id/username"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="You Username can be changed later in settings"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/picSelectButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp" />
+        android:layout_marginTop="10dp"
+        android:textSize="20dp"
+        android:text="Enter a username for your profile"
+        android:id="@+id/textView4"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="next"
+        android:onClick="verifyUsername"
+        android:id="@+id/unameButton"
+        android:layout_below="@+id/username"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="31dp" />
+
     <EditText
-        android:layout_width="200dp"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/username"
+        android:hint="Enter your username"
+        android:layout_marginTop="49dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:hint="Set Username Here"
         android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Username can be changed later in settings"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/unameButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp" />
+
+
+
 </RelativeLayout>
