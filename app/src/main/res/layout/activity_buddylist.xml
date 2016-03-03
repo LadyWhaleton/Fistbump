@@ -12,6 +12,7 @@
     tools:context="fistbumpstudios.fistbump.Buddylist">
 
     <ListView
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/buddylistView"
@@ -20,6 +21,8 @@
 
     <TextView
         android:layout_width="wrap_content"
+        android:textColor="#FFFF"
+
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/no_friends"

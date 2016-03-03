@@ -51,8 +51,12 @@
             android:name=".tabbedMain"
             android:label="@string/title_activity_tabbed_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".WifiDirect"></activity>
-        <activity android:name=".setProfilePic"></activity>
+        <activity android:name=".WifiDirect" />
+        <activity android:name=".setProfilePic" />
+        <activity
+            android:name=".navDrawer"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

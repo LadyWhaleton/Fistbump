@@ -147,7 +147,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             switch(position)
             {
                 case 0:
-                    return new tab_list_buddies();
+                    return new buddiesTab();
                 case 1:
                     return new messagesTab();
 
