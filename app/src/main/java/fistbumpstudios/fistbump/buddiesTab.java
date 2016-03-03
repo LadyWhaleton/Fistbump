@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,12 +25,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class buddiesTab extends android.support.v4.app.Fragment {
-
     public static List<Buddy> Buddies;
     ListView buddylistView;
     TextView emptyListView;
     public buddiesTab() {
-        // Required empty public constructor
     }
 
     public static buddiesTab newInstance() {
@@ -60,7 +58,6 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         buddylistView.setEmptyView(emptyListView);
         LoadBuddies();
         setListClickListener();
-
     }
 
     private void setListClickListener(){
@@ -68,12 +65,13 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 String buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
                 String macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
-                Toast.makeText(getContext(), buddyname, Toast.LENGTH_SHORT).show();
+                registerForContextMenu(buddylistView);
+                buddylistView.showContextMenuForChild(v);
+                unregisterForContextMenu(buddylistView);
+
             }
         });
     }
-
-
     private void LoadBuddies() {
         try {
             String Message;
@@ -136,13 +134,22 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             // do the same for the other fields
             TextView macAddr = (TextView) view.findViewById(R.id.MacAddress);
             macAddr.setText(currentBuddy.getID());
-
-
             ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
             Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
             pic.setImageDrawable(myDrawable);
-            //pic.setImageURI(currentBuddy.getProficPic());
             return view;
+        }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+                                    ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId() == R.id.buddylistView) {
+            menu.setHeaderTitle("Select an Action");
+            menu.add(0, v.getId(), 0, "Action 1");
+            menu.add(0, v.getId(), 0, "Action 2");
+            menu.add(0, v.getId(), 0, "Action 3");
         }
     }
 }
