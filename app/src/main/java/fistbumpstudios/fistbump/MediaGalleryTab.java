@@ -1,18 +1,17 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Context;
-import android.media.Image;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -39,8 +38,8 @@ public class MediaGalleryTab extends Fragment {
 
     // TODO: Temporary hardcoded images. Need to use directory.
     private int[] images = {
-            R.drawable.fancy_wailord_by_pokemaster360,
-            R.drawable.fancy_wailord_by_pokemaster360
+            R.drawable.wailord,
+            R.drawable.wailord
     };
 
     // TODO: Rename and change types of parameters
@@ -99,9 +98,36 @@ public class MediaGalleryTab extends Fragment {
         galleryGridView.setEmptyView(emptyGridView);
         LoadMedia();
 
+        setListClickListener();
+
     }
 
+    private void setListClickListener()
+    {
+        galleryGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // display owner name
+                // display owner's profile picture
 
+                /**
+                 * Intent intent = new Intent();
+                 * intent.setAction(Intent.ACTION_VIEW);
+                 * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
+                 */
+
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                //Uri uri = Uri.parse("android.resource://fistbumpstudios.fistbump/drawable/wailord.jpg");
+
+                Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
+
+                intent.setDataAndType(path, "image/*");
+
+                startActivity(intent);
+            }
+        });
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

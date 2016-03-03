@@ -48,11 +48,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".tabbedMain"
+            android:name=".TabbedMain"
             android:label="@string/title_activity_tabbed_main"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+
         <activity android:name=".WifiDirect" />
         <activity android:name=".setProfilePic" />
+        <activity
+            android:name=".Scroll_Message"
+            android:label="@string/title_activity_scroll__message"
+            android:parentActivityName=".TabbedMain"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fistbumpstudios.fistbump.TabbedMain" />
+        </activity>
     </application>
 
 </manifest>

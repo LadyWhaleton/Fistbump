@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- This xml file represents a single item in the Media Gallery. -->
 
     <ImageView
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:id="@+id/gallery_item" />
-</LinearLayout>
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:id="@+id/gallery_item"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center_vertical|center_horizontal"/>
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Owner"
+        android:id="@+id/gallery_item_owner"
+        android:layout_alignBottom="@+id/gallery_item"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/gallery_item"
+        android:background="#000000"
+        android:textColor="#FFFF"
+        android:alpha=".85" />
+</RelativeLayout>

@@ -26,15 +26,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class buddiesTab extends android.support.v4.app.Fragment {
+public class BuddiesTab extends android.support.v4.app.Fragment {
     public static List<Buddy> Buddies;
     ListView buddylistView;
     TextView emptyListView;
-    public buddiesTab() {
+    public BuddiesTab() {
     }
 
-    public static buddiesTab newInstance() {
-        buddiesTab fragment = new buddiesTab();
+    public static BuddiesTab newInstance() {
+        BuddiesTab fragment = new BuddiesTab();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -61,6 +61,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         LoadBuddies();
         setListClickListener();
     }
+    
 
     private void setListClickListener(){
         buddylistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
