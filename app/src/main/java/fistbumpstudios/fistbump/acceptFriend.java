@@ -2,7 +2,6 @@ package fistbumpstudios.fistbump;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -50,7 +48,7 @@ public class acceptFriend extends AppCompatActivity {
         String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
         obj.put("name", infoArray[0]);
-        obj.put("MAC Address", infoArray[1]);
+        obj.put("MACAddress", infoArray[1]);
         //create new json object and save to filesystem
         FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
         OutputStreamWriter out = new OutputStreamWriter(fos);
