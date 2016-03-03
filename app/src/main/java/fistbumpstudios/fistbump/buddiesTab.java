@@ -4,10 +4,10 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -24,25 +24,16 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class buddiesTab extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class buddiesTab extends android.support.v4.app.Fragment {
 
-    boolean BuddylistChanged;
-    private ListView mListView;
     public static List<Buddy> Buddies;
     ListView buddylistView;
     TextView emptyListView;
-
-
     public buddiesTab() {
         // Required empty public constructor
     }
 
-
-    public static buddiesTab newInstance(String param1, String param2) {
+    public static buddiesTab newInstance() {
         buddiesTab fragment = new buddiesTab();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -57,11 +48,8 @@ public class buddiesTab extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
         return inflater.inflate(R.layout.activity_buddylist, container, false);
     }
-
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -71,11 +59,22 @@ public class buddiesTab extends Fragment {
         emptyListView = (TextView) getView().findViewById(R.id.emptyBuddylistView);
         buddylistView.setEmptyView(emptyListView);
         LoadBuddies();
+        setListClickListener();
+
+    }
+
+    private void setListClickListener(){
+        buddylistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                String buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
+                String macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
+                Toast.makeText(getContext(), buddyname, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
-    private void LoadBuddies()
-    {
+    private void LoadBuddies() {
         try {
             String Message;
             FileInputStream fis = getActivity().openFileInput(acceptFriend.friendFile);
@@ -83,8 +82,7 @@ public class buddiesTab extends Fragment {
             BufferedReader br = new BufferedReader(isr);
             StringBuffer sb = new StringBuffer();
 
-            while ( (Message = br.readLine()) != null)
-            {
+            while ((Message = br.readLine()) != null) {
                 JSONObject obj = new JSONObject(Message);
                 jsonToBuddy(obj);
             }
@@ -99,38 +97,30 @@ public class buddiesTab extends Fragment {
     private void jsonToBuddy(JSONObject obj) throws JSONException {
         Uri profilePic = Uri.parse("http://orig06.deviantart.net/1722/f/2009/346/0/d/wailord_by_xous54.png");
         addBuddy(obj.getString("name"), obj.getString("MACAddress"), profilePic);
-        Toast.makeText(getContext(), obj.getString("MACAddress"), Toast.LENGTH_LONG).show();
     }
 
     // Implementation question: Should we update the database right after adding?
-    private void addBuddy(String name, String id, Uri pic)
-    {
+    private void addBuddy(String name, String id, Uri pic) {
         Buddies.add(new Buddy(name, id, pic));
         LiveUpdateBuddies();
     }
 
-
     // update buddies (while in App)
-    private void LiveUpdateBuddies()
-    {
+    private void LiveUpdateBuddies() {
         ArrayAdapter<Buddy> buddyAdapter = new BuddyListAdapter(getActivity());
         buddylistView.setAdapter(buddyAdapter);
     }
 
-
-    private class BuddyListAdapter  extends ArrayAdapter<Buddy>
-    {
-        public BuddyListAdapter(Context context)
-        {
-            super(context,R.layout.listview_buddy_info, Buddies);
+    private class BuddyListAdapter extends ArrayAdapter<Buddy> {
+        public BuddyListAdapter(Context context) {
+            super(context, R.layout.listview_buddy_info, Buddies);
         }
 
         @Override
-        public View getView (int position, View view, ViewGroup parent)
-        {
+        public View getView(int position, View view, ViewGroup parent) {
 
             // if there's no instance of this view
-            if (view == null){
+            if (view == null) {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 view = inflater.inflate(R.layout.listview_buddy_info, parent, false);
             }
@@ -151,7 +141,7 @@ public class buddiesTab extends Fragment {
             ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
             Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
             pic.setImageDrawable(myDrawable);
-                        //pic.setImageURI(currentBuddy.getProficPic());
+            //pic.setImageURI(currentBuddy.getProficPic());
             return view;
         }
     }
