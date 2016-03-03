@@ -41,9 +41,6 @@ public class acceptFriend extends AppCompatActivity {
         }
     }
 
-
-
-
     public void accept(View view) throws JSONException, IOException {
         String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
@@ -57,13 +54,13 @@ public class acceptFriend extends AppCompatActivity {
         out.flush();
 
         //open main activity after finishing writing your friend
-        Intent intent = new Intent(this, tabbedMain.class);
+        Intent intent = new Intent(this, TabbedMain.class);
         startActivity(intent);
         finish();
     }
 
     public void reject(View view){
-        Intent intent = new Intent(this, tabbedMain.class);
+        Intent intent = new Intent(this, TabbedMain.class);
         startActivity(intent);
         finish();
     }

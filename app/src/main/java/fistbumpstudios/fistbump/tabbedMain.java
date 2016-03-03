@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
+public class TabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     NfcAdapter nfc;
     Context context;
@@ -77,7 +77,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             @Override
             public void onClick(View view) {
             if(checkForNFC())
-                nfc.setNdefPushMessageCallback(tabbedMain.this, tabbedMain.this);
+                nfc.setNdefPushMessageCallback(TabbedMain.this, TabbedMain.this);
             }
         });
     }
@@ -147,9 +147,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             switch(position)
             {
                 case 0:
-                    return new buddiesTab();
+                    return new BuddiesTab();
                 case 1:
-                    return new messagesTab();
+                    return new MessagesTab();
                 case 2:
                     return new MediaGalleryTab();
                 default:

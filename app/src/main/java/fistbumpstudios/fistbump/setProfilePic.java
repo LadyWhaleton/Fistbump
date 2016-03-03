@@ -73,7 +73,7 @@ public class setProfilePic extends AppCompatActivity {
             return;
         }
         writePicPath();
-        Intent intent = new Intent(this, tabbedMain.class);
+        Intent intent = new Intent(this, TabbedMain.class);
         startActivity(intent);
         finish();
     }
