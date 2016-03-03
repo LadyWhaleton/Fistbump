@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -147,9 +149,27 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.buddylistView) {
             menu.setHeaderTitle("Select an Action");
-            menu.add(0, v.getId(), 0, "Action 1");
-            menu.add(0, v.getId(), 0, "Action 2");
-            menu.add(0, v.getId(), 0, "Action 3");
+            menu.add(0, v.getId(), 0, "Send a Message");
+            menu.add(0, v.getId(), 0, "Edit");
+            menu.add(0, v.getId(), 0, "Delete");
         }
     }
+    
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (item.getTitle() == "Send a Message") {
+            Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
+        }
+        else if (item.getTitle() == "Edit") {
+            Toast.makeText(getContext(), "Editing", Toast.LENGTH_SHORT).show();
+        }
+        else if (item.getTitle() == "Delete") {
+            Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            return false;
+        }
+        return true;
+    }
+
 }
