@@ -159,6 +159,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle() == "Send a Message") {
             Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
+
         }
         else if (item.getTitle() == "Edit") {
             Toast.makeText(getContext(), "Editing", Toast.LENGTH_SHORT).show();
@@ -171,5 +172,6 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         }
         return true;
     }
+
 
 }

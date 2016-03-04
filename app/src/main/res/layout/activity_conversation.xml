@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp" >
+
+    <ListView
+        android:id="@+id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/sendMsgLayout"
+        android:overScrollMode="always"
+        android:stackFromBottom="true"
+        android:layout_alignParentTop="true" >
+    </ListView>
+
+    <RelativeLayout
+        android:id="@+id/sendMsgLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="5dp" >
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimaryDark" />
+
+        <ImageView
+            android:id="@+id/attachFile"
+            android:tint="@color/pink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/messageText"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_attachment_white_24dp" />
+
+
+        <EditText
+            android:id="@+id/messageText"
+            android:textColorHint="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:paddingLeft="20dip"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/imageSend"
+            android:layout_toRightOf="@+id/attachFile"
+            android:hint="Type a message"
+            android:maxLines="3" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/imageSend"
+            android:tint="@color/pink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/messageText"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/send" />
+    </RelativeLayout>
+</RelativeLayout>
