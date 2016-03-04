@@ -28,4 +28,25 @@ public class Media {
         this.id = sender.getID();
         this.ownerProfilePic = sender.getProficPic();
     }
+
+    public String getOwnerName()
+    {
+        return this.ownerName;
+    }
+
+    public Uri getOwnerProfilePic()
+    {
+        return this.ownerProfilePic;
+    }
+
+    public String getTimestamp()
+    {
+        return this.timeReceived;
+    }
+
+    public String getMediaPath()
+    {
+        return this.file.getPath();
+    }
+
 }
