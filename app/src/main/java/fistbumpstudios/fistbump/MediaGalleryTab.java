@@ -40,6 +40,11 @@ public class MediaGalleryTab extends Fragment {
     // TODO: Temporary hardcoded images. Need to use directory.
     private int[] images = {
             R.drawable.wailord,
+            R.drawable.wailord,
+            R.drawable.wailord,
+            R.drawable.wailord,
+            R.drawable.wailord,
+            R.drawable.wailord,
             R.drawable.wailord
     };
 
@@ -108,24 +113,14 @@ public class MediaGalleryTab extends Fragment {
         galleryGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // display owner name
-                // display owner's profile picture
 
                 /**
                  * Intent intent = new Intent();
                  * intent.setAction(Intent.ACTION_VIEW);
+                 * Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
                  * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
+                 * startActivity(intent);
                  */
-
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                //Uri uri = Uri.parse("android.resource://fistbumpstudios.fistbump/drawable/wailord.jpg");
-
-                Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
-
-                intent.setDataAndType(path, "image/*");
-
-                startActivity(intent);
             }
         });
     }
@@ -262,6 +257,9 @@ public class MediaGalleryTab extends Fragment {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 view = inflater.inflate(R.layout.gridview_media_info, parent, false);
             }
+
+            // display owner profile pic
+            // display timestamp
 
             ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
             gallery_item.setImageDrawable(getResources().getDrawable(images[position]));
