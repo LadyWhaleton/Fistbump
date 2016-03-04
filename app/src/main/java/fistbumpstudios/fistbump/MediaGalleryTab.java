@@ -26,6 +26,7 @@ import java.util.List;
  * to handle interaction events.
  * Use the {@link MediaGalleryTab#newInstance} factory method to
  * create an instance of this fragment.
+ * http://developer.android.com/guide/topics/media/mediaplayer.html
  */
 public class MediaGalleryTab extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -114,13 +115,35 @@ public class MediaGalleryTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                /** http://www.edumobile.org/android/get-file-extension-and-mime-type-in-android-development/
+                 * http://stackoverflow.com/questions/8589645/how-to-determine-mime-type-of-file-in-android
+                 * File selected = new File(fileList.get(position));
+                 if(selected.isDirectory()){
+                 ListDir(selected);
+                 }else {
+                 Uri selectedUri = Uri.fromFile(selected);
+                 String fileExtension
+                 = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
+                 String mimeType
+                 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
+
+                 Toast.makeText(GetFileExtensionWithMIMEType.this,
+                 "FileExtension: " + fileExtension + "n" +
+                 "MimeType: " + mimeType,
+                 Toast.LENGTH_LONG).show();
+                 *
+                 */
+
                 /**
                  * Intent intent = new Intent();
                  * intent.setAction(Intent.ACTION_VIEW);
                  * Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
+                 * Uri path = Uri.parse(File[position].toString());
                  * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
                  * startActivity(intent);
                  */
+
+
             }
         });
     }
