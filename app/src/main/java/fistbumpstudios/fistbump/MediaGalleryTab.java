@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +16,9 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +40,8 @@ public class MediaGalleryTab extends Fragment {
 
     GridView galleryGridView;
     TextView emptyGridView;
+
+    private String folderName = Environment.getExternalStorageDirectory().toString() + "/Fistbump";
     public static List<Media> mediaList;
 
     // TODO: Temporary hardcoded images. Need to use directory.
@@ -99,6 +105,17 @@ public class MediaGalleryTab extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // check if the file directory has been created for Fistbump. If not, make one.
+        File fistbumpFolder = new File(folderName);
+
+        if(!fistbumpFolder.exists()) {
+            fistbumpFolder.mkdirs();
+            Toast.makeText(getContext(), fistbumpFolder + " created!", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(getContext(), fistbumpFolder + " already exists!", Toast.LENGTH_SHORT).show();
+        }
+
         mediaList = new ArrayList<>();
         galleryGridView = (GridView) getView().findViewById(R.id.galleryGridView);
         emptyGridView = (TextView) getView().findViewById(R.id.emptyGalleryTextView);
@@ -143,6 +160,7 @@ public class MediaGalleryTab extends Fragment {
                  * startActivity(intent);
                  */
 
+                Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
 
             }
         });
