@@ -1,6 +1,7 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -159,6 +160,8 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle() == "Send a Message") {
             Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity() , conversation.class);
+            startActivity(intent);
 
         }
         else if (item.getTitle() == "Edit") {

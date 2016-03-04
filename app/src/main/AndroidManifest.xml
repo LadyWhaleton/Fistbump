@@ -56,15 +56,17 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
-
         <activity android:name=".WifiDirect" />
         <activity android:name=".setProfilePic" />
+
         <activity android:name=".conversation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".tabbedMain" />
         </activity>
     </application>
-
 </manifest>

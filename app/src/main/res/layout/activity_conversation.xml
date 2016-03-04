@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
-    android:layout_marginLeft="2dp"
-    android:layout_marginRight="2dp" >
+    >
 
     <ListView
         android:id="@+id/listview"
@@ -37,16 +36,20 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/messageText"
             android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:padding="4dp"
+            android:layout_marginTop="5dp"
             android:src="@drawable/ic_attachment_white_24dp" />
 
 
         <EditText
             android:id="@+id/messageText"
-            android:textColorHint="@color/white"
+            android:textColorHint="@color/gray"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:paddingLeft="20dip"
+            android:paddingLeft="5dp"
             android:layout_marginRight="20dp"
             android:layout_toLeftOf="@+id/imageSend"
             android:layout_toRightOf="@+id/attachFile"
@@ -64,6 +67,7 @@
             android:layout_alignBottom="@+id/messageText"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
             android:src="@drawable/send" />
     </RelativeLayout>
 </RelativeLayout>
