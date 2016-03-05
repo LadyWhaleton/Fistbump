@@ -5,7 +5,10 @@
     <color name="colorAccent">#fafafa</color>
     <color name="blue">#B0E0E6</color>
     <color name="pink">#e91e63</color>
+    <color name="white">#FFFFFF</color>
     <color name="transparent">#00000000</color>
     <color name="background">#212121</color>
     <color name="black_overlay">#66000000</color>
+    <color name="gray">#B0BEC5</color>
+    <color name="teal">#009688</color>
 </resources>

@@ -3,9 +3,11 @@ package fistbumpstudios.fistbump;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -32,18 +34,20 @@ public class setUserName extends AppCompatActivity {
     public String getMAC(){
         WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress() + "\n";
+        return info.getMacAddress();
     }
 
     private void makeVerifyFile(String username){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("UserName", username);
+        editor.putString("MAC", getMAC());
+        editor.apply();
 
         try {
-            //userfile = new File("user_info.txt");
             FileOutputStream fos = openFileOutput(userFilename, Context.MODE_PRIVATE);
-
-            //FileOutputStream fos = new FileOutputStream("user_info.txt");
             fos.write((username + "\n").getBytes());
-            fos.write((getMAC()).getBytes());
+            fos.write((getMAC()+"\n").getBytes());
             fos.close();
 
         } catch (IOException e) {

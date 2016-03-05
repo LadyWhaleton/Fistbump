@@ -51,13 +51,22 @@
             android:name=".tabbedMain"
             android:label="@string/title_activity_tabbed_main"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+        </intent-filter>
+        <activity android:name=".WifiDirect" />
+        <activity android:name=".setProfilePic" />
+
+        <activity android:name=".conversation">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-
-        <activity android:name=".WifiDirect" />
-        <activity android:name=".setProfilePic" />
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".tabbedMain" />
+        </activity>
     </application>
-
 </manifest>

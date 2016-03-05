@@ -2,10 +2,6 @@ package fistbumpstudios.fistbump;
 
 import android.net.Uri;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by Ryota on 2/28/2016.
  */
@@ -22,9 +18,21 @@ public class Message {
         // timeCreated = df.format(new Date());
         this.name = author.getName();
         this.id = author.getID();
+        this.body = body;
         this.profilePic = author.getProficPic();
         this.timeCreated = timeCreated;
     }
+
+    Message(String name, String id , String body, String timeCreated){
+        //DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+        // timeCreated = df.format(new Date());
+        this.name = name;
+        this.id = id;
+        this.body = body;
+        this.profilePic = null;
+        this.timeCreated = timeCreated;
+    }
+
 
     public String getSenderName()
     {
@@ -34,6 +42,7 @@ public class Message {
     {
         return this.id;
     }
+    public String getBody(){ return  this.body;}
     public Uri getSenderPic()
     {
         return this.profilePic;
