@@ -2,11 +2,13 @@ package fistbumpstudios.fistbump;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcEvent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -23,8 +25,6 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -186,18 +186,25 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         String filepath =  getApplicationContext().getFilesDir() + "/" + setUserName.userFilename;
         File userfile = new File(filepath);
         BufferedReader br = null;
+//
+//        try {
+//            br = new BufferedReader(new FileReader(userfile));
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                message += line +";";
+//            }
+//            br.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            Toast.makeText(this, "cannot find userinfo", Toast.LENGTH_LONG).show();
+//        }
 
-        try {
-            br = new BufferedReader(new FileReader(userfile));
-            String line;
-            while ((line = br.readLine()) != null) {
-                message += line +";";
-            }
-            br.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "cannot find userinfo", Toast.LENGTH_LONG).show();
-        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String username = preferences.getString("UserName", null);
+        String mac = preferences.getString("MAC", null);
+        message = username + ";" + mac + ";";
+
+
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
