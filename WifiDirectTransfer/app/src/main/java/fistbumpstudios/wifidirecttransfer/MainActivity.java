@@ -81,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int reasonCode) {
-
+                Context context = getApplicationContext();
+                Toast.makeText(context, "Stop spamming the button fool!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -339,6 +340,11 @@ public class MainActivity extends AppCompatActivity {
             for (Socket clientSocket : clientSockets) {
                 try {
                     // add if not connected, add to to_remove
+                    if (!clientSocket.isConnected())
+                    {
+                        to_remove.add(clientSocket);
+                        continue;
+                    }
 
                     OutputStream outputStream = clientSocket.getOutputStream();
                     outputStream.write(bytes, 0, 12);
@@ -362,10 +368,6 @@ public class MainActivity extends AppCompatActivity {
             }
             for (Socket remove_socket : to_remove)
             {
-                //try {
-                  //  remove_socket.close(); }
-                //catch (IOException f) {
-                  //  f.printStackTrace();}
                 clientSockets.remove(remove_socket);
             }
             to_remove.clear();
@@ -387,9 +389,15 @@ public class MainActivity extends AppCompatActivity {
         //display_message(String.valueOf(bytes[i]));
 
         //display_message(name + text);
+        Collection<Socket> to_remove = new ArrayList<Socket>();
 
         for (Socket clientSocket : clientSockets) {
             try {
+                if (!clientSocket.isConnected())
+                {
+                    to_remove.add(clientSocket);
+                    continue;
+                }
                 DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
 
                 outputStream.write(bytes, 0, 12);
@@ -398,13 +406,14 @@ public class MainActivity extends AppCompatActivity {
 
             } catch (IOException e) {
                 e.printStackTrace();
-                //try {
-                  //  clientSocket.close(); }
-                //catch (IOException f) {
-                  //  f.printStackTrace();}
-                clientSockets.remove(clientSocket);
+                to_remove.add(clientSocket);
             }
         }
+        for (Socket remove_socket : to_remove)
+        {
+            clientSockets.remove(remove_socket);
+        }
+        to_remove.clear();
     }
 
 }
