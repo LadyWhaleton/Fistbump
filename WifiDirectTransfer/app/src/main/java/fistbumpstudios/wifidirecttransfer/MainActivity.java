@@ -23,6 +23,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
@@ -102,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void send_button_press(View view) {
         if (!clientSockets.isEmpty() && input_area.getText().length() > 0) {
-            send_message("The Destroyer", input_area.getText().toString());
+            send_message("The Destroyer", input_area.getText().toString(), null);
+            input_area.setText("");
         }
     }
 
@@ -110,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         // send_file takes in file path and file name
         if (!clientSockets.isEmpty())
             send_file(Environment.getExternalStorageDirectory()
-                .getAbsolutePath() + File.separator + "test.jpg", "test.jpg");
+                .getAbsolutePath() + File.separator + "test.jpg", "test.jpg", null);
     }
     public void make_server_thread()
     {
@@ -142,7 +144,6 @@ public class MainActivity extends AppCompatActivity {
                     if (socket != null) {
                         clientSockets.add(socket);
 
-
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
                     }
@@ -155,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    // comm thread is what sits and listens to what gets sent to the socket
+    // if the phone is a client, only one comm thread exists and listens to what the server sends
+    // if the phone is a server, the phone spawns a comm thread for each client
     class CommunicationThread implements Runnable {
 
         private Socket clientSocket;
@@ -166,23 +171,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public CommunicationThread(Socket clientSocket) {
-
             this.clientSocket = clientSocket;
         }
 
         public void run() {
 
             try {
+                InputStream is = this.clientSocket.getInputStream();
+                int bytesread;
                 while(!Thread.currentThread().isInterrupted()) {
 
-
-                     //String read = inputStream.readUTF();
-                     //display_message(read);
-                    InputStream is = this.clientSocket.getInputStream();
                     //ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                    int bytesread;
                     String what = "";
-
 
                     bytesread = is.read(buffer, 0, 4);
                     int option = buffer_to_int(buffer, 0);
@@ -208,15 +208,17 @@ public class MainActivity extends AppCompatActivity {
 
                     String name = new String(name_byte_arr, "UTF-8");
 
-                    if (option == 1)
+                    if (option == 1) // message
                     {
                         byte text_byte_arr[] = new byte [text_size];
                         bytesread = is.read(text_byte_arr, 0, text_size);
 
                         String text = new String(text_byte_arr, "UTF-8");
                         display_message(name + ": " + text + "\n");
+                        if (serverSocket != null) // if server, redistribute
+                            send_message(name, text, Collections.singleton(clientSocket));
                     }
-                    else if (option == 2)
+                    else if (option == 2) // file
                     {
                         byte file_buffer[] = new byte[1024];
 
@@ -233,8 +235,10 @@ public class MainActivity extends AppCompatActivity {
                         display_message(text_size + "\n");
 
                         display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
+                        if (serverSocket != null) // redistribute file if server
+                            send_file(file.getPath(), file.getName(), Collections.singleton(clientSocket));
                     }
-                    else
+                    else // error, we just kill the current thread and try again with a new one.
                     {
                         display_message("Something weird happened\n");
                         if (serverSocket == null) {
@@ -311,7 +315,10 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void send_file(String file_path, String file_name)
+    // send_file sends a file to everybody
+    // file_path is the path of the file
+    // file_name is what the file will be called when created
+    private void send_file(String file_path, String file_name, Collection<Socket> to_exclude)
     {
         if (!clientSockets.isEmpty()) {
             int option = 2;
@@ -327,9 +334,7 @@ public class MainActivity extends AppCompatActivity {
             }
             display_message(String.valueOf(file_length) + "\n");
             byte bytes[] = new byte[1024];
-            copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
+
 
             //for (int i = 0; i < 12; ++i)
             //display_message(String.valueOf(bytes[i]));
@@ -339,7 +344,9 @@ public class MainActivity extends AppCompatActivity {
 
             for (Socket clientSocket : clientSockets) {
                 try {
-                    // add if not connected, add to to_remove
+                    if (to_exclude != null)
+                        if (to_exclude.contains(clientSocket))
+                            continue;
                     if (!clientSocket.isConnected())
                     {
                         to_remove.add(clientSocket);
@@ -347,6 +354,9 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     OutputStream outputStream = clientSocket.getOutputStream();
+                    copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+                    copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+                    copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
                     outputStream.write(bytes, 0, 12);
                     outputStream.write(name.getBytes());
 
@@ -374,12 +384,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void send_message(String name, String message)
+    // send_message sends a message to everybody
+    // name is the name of the sender
+    // message is the message to be sent
+    // to_exclude are the sockets to be ignored on send
+    private void send_message(String name, String message, Collection<Socket> to_exclude)
     {
         int option = 1;
         int message_length = message.length();
         int name_length = name.length();
-        input_area.setText("");
         byte bytes[] = new byte[1024];
         copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
         copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
@@ -393,6 +406,9 @@ public class MainActivity extends AppCompatActivity {
 
         for (Socket clientSocket : clientSockets) {
             try {
+                if (to_exclude != null)
+                    if (to_exclude.contains(clientSocket))
+                        continue;
                 if (!clientSocket.isConnected())
                 {
                     to_remove.add(clientSocket);
