@@ -23,9 +23,7 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/no_files"
         android:id="@+id/emptyGalleryTextView"
-        android:layout_marginTop="225dp"
-        android:gravity="fill_horizontal"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center_horizontal|center_vertical"
         android:alpha=".40"
         android:textStyle="bold" />
 

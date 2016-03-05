@@ -101,87 +101,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void send_button_press(View view) {
         if (!clientSockets.isEmpty() && input_area.getText().length() > 0) {
-            String text = input_area.getText().toString();
-            int option = 1;
-            int text_length = input_area.getText().length();
-            String name = "The Destroyer";
-            int name_length = name.length();
-            input_area.setText("");
-            byte bytes[] = new byte[1024];
-            copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(text_length), 8, 4);
-            String what = "";
-
-            //for (int i = 0; i < 12; ++i)
-                //display_message(String.valueOf(bytes[i]));
-
-            //display_message(name + text);
-
-            for (Socket clientSocket : clientSockets) {
-                try {
-                    DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
-
-                    outputStream.write(bytes, 0, 12);
-                    outputStream.write(name.getBytes());
-                    outputStream.write(text.getBytes());
-
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            send_message("The Destroyer", input_area.getText().toString());
         }
     }
 
     public void send_file_button_press(View view) {
-        if (!clientSockets.isEmpty()) {
-            int option = 2;
-
-            String name = "test.jpg";
-            int name_length = name.length();
-            File file = new File(Environment.getExternalStorageDirectory()
-                    .getAbsolutePath() + File.separator + name);
-            // Get the size of the file
-            int file_length = (int) file.length();
-            if (file_length == 0) {
-                display_message("woops, no file\n");
-                return;
-            }
-            display_message(String.valueOf(file_length) + "\n");
-            byte bytes[] = new byte[1024];
-            copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-            copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
-
-            //for (int i = 0; i < 12; ++i)
-            //display_message(String.valueOf(bytes[i]));
-
-            //display_message(name + text);
-
-            for (Socket clientSocket : clientSockets) {
-                try {
-
-                    OutputStream outputStream = clientSocket.getOutputStream();
-                    outputStream.write(bytes, 0, 12);
-                    outputStream.write(name.getBytes());
-
-                    InputStream in = new FileInputStream(file);
-
-                    int count;
-                    int bytes_sent = 0;
-                    while ((count = in.read(bytes)) > 0) {
-                        outputStream.write(bytes, 0, count);
-                        bytes_sent += count;
-                    }
-                    display_message(String.valueOf(bytes_sent) + "\n");
-
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        // send_file takes in file path and file name
+        if (!clientSockets.isEmpty())
+            send_file(Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + File.separator + "test.jpg", "test.jpg");
     }
     public void make_server_thread()
     {
@@ -243,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
 
         public void run() {
 
-
             try {
                 while(!Thread.currentThread().isInterrupted()) {
 
@@ -304,11 +231,15 @@ public class MainActivity extends AppCompatActivity {
                         }
                         display_message(text_size + "\n");
 
-                        display_message("Made a file called " + name + " of size " + bytes_read_so_far + "\n");
+                        display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
                     }
                     else
                     {
                         display_message("Something weird happened\n");
+                        if (serverSocket == null) {
+                            clientThread = new Thread(new ClientThread());
+                            clientThread.start();
+                        }
                         return;
                     }
 
@@ -321,6 +252,7 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
                 display_message("something messed up yo\n");
+                return;
             }
         }
 
@@ -377,4 +309,102 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void send_file(String file_path, String file_name)
+    {
+        if (!clientSockets.isEmpty()) {
+            int option = 2;
+
+            String name = file_name;
+            int name_length = name.length();
+            File file = new File(file_path);
+            // Get the size of the file
+            int file_length = (int) file.length();
+            if (file_length == 0) {
+                display_message("woops, no file\n");
+                return;
+            }
+            display_message(String.valueOf(file_length) + "\n");
+            byte bytes[] = new byte[1024];
+            copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+            copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+            copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
+
+            //for (int i = 0; i < 12; ++i)
+            //display_message(String.valueOf(bytes[i]));
+
+            //display_message(name + text);
+            Collection<Socket> to_remove = new ArrayList<Socket>();
+
+            for (Socket clientSocket : clientSockets) {
+                try {
+                    // add if not connected, add to to_remove
+
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    outputStream.write(bytes, 0, 12);
+                    outputStream.write(name.getBytes());
+
+                    InputStream in = new FileInputStream(file);
+
+                    int count;
+                    int bytes_sent = 0;
+                    while ((count = in.read(bytes)) > 0) {
+                        outputStream.write(bytes, 0, count);
+                        bytes_sent += count;
+                    }
+                    display_message(String.valueOf(bytes_sent) + "\n");
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    to_remove.add(clientSocket);
+                }
+            }
+            for (Socket remove_socket : to_remove)
+            {
+                //try {
+                  //  remove_socket.close(); }
+                //catch (IOException f) {
+                  //  f.printStackTrace();}
+                clientSockets.remove(remove_socket);
+            }
+            to_remove.clear();
+        }
+    }
+
+    private void send_message(String name, String message)
+    {
+        int option = 1;
+        int message_length = message.length();
+        int name_length = name.length();
+        input_area.setText("");
+        byte bytes[] = new byte[1024];
+        copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 8, 4);
+
+        //for (int i = 0; i < 12; ++i)
+        //display_message(String.valueOf(bytes[i]));
+
+        //display_message(name + text);
+
+        for (Socket clientSocket : clientSockets) {
+            try {
+                DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+                outputStream.write(bytes, 0, 12);
+                outputStream.write(name.getBytes());
+                outputStream.write(message.getBytes());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                //try {
+                  //  clientSocket.close(); }
+                //catch (IOException f) {
+                  //  f.printStackTrace();}
+                clientSockets.remove(clientSocket);
+            }
+        }
+    }
+
 }
