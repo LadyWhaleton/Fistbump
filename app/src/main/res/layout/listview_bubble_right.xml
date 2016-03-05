@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/row"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    android:padding="8dp"
+    >
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/ProfilePic"
+        android:layout_alignParentRight="true"
+        android:paddingTop="2dp"
+        android:src="@drawable/profile_gray" />
+
+
+    <RelativeLayout
+        android:layout_toLeftOf="@id/ProfilePic"
+        android:id="@+id/childTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/right_bubble"
+        android:backgroundTint="@color/teal"
+        android:layout_margin="8dp"
+        android:paddingEnd="20dp"
+        android:padding="8dp"
+        >
+
+        <!-- The Message -->
+        <TextView
+            android:id="@+id/msgBody"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingBottom="8dp"
+            />
+        <!-- The Date -->
+        <TextView
+            android:id="@+id/txtDate"
+            android:paddingLeft="3dp"
+            android:paddingRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/msgBody"
+            android:textColor="@color/gray"
+            android:textSize="12sp"
+            />
+    </RelativeLayout>
+</RelativeLayout>

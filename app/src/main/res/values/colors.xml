@@ -10,4 +10,5 @@
     <color name="background">#212121</color>
     <color name="black_overlay">#66000000</color>
     <color name="gray">#B0BEC5</color>
+    <color name="teal">#009688</color>
 </resources>

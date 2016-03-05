@@ -22,7 +22,6 @@ public class conversation extends AppCompatActivity {
     Context context;
     public static List<Message> messages;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +52,9 @@ public class conversation extends AppCompatActivity {
 
     private void addMsg(){
         Message msg = new Message("Stephanie", "2123123", "hello ryota, you baka\n KONOYAROU!\n DOHENTAI", "2/30/16");
+        Message msg2 = new Message("ryotas4", "2123123", "hello stephanie!", "2/30/16");
         messages.add(msg);
+        messages.add(msg2);
         LiveUpdateConversaition();
     }
 
@@ -64,14 +65,23 @@ public class conversation extends AppCompatActivity {
 
         @Override
         public View getView(int position, View view, ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(getContext());
 
             // if there's no instance of this view
             if (view == null) {
-                LayoutInflater inflater = LayoutInflater.from(getContext());
                 view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
             }
 
+
             Message currentMsg = messages.get(position);
+            if(currentMsg.getSenderName().equals(username)){
+                view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
+            }
+
+            else {
+                view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
+            }
+
             TextView body = (TextView) view.findViewById(R.id.msgBody);
             body.setText(currentMsg.getMessageBody());
 
