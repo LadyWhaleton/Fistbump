@@ -46,6 +46,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         setContentView(R.layout.activity_tabbed_main);
         context = getApplicationContext();
 
+
+
+
         //check if user already made a profile
         if(checkNewUser())
         {

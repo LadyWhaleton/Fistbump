@@ -70,6 +70,9 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
                 macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
+
+
+
                 registerForContextMenu(buddylistView);
                 buddylistView.showContextMenuForChild(v);
                 unregisterForContextMenu(buddylistView);
