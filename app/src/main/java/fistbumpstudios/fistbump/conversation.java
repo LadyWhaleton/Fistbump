@@ -3,6 +3,7 @@ package fistbumpstudios.fistbump;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -157,10 +158,7 @@ public class conversation extends AppCompatActivity {
         mEdit.clearFocus();
     }
 
-    public void attachFile(View view) {
 
-
-    }
 
     public void selectFile(View view){
         Intent chooseFile;
@@ -168,10 +166,16 @@ public class conversation extends AppCompatActivity {
         chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
         chooseFile.setType("file/*");
         intent = Intent.createChooser(chooseFile, "Choose a file");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
         startActivityForResult(intent, RESULTCODE);
-
-
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK){
+            Uri uri = data.getData();
+            String filePath = uri.getPath();
+        }
+    }
 }
+
+

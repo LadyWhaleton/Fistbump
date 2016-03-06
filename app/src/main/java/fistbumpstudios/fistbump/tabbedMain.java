@@ -1,5 +1,6 @@
 package fistbumpstudios.fistbump;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -55,6 +57,15 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //make dialog
+
+        final Dialog settingsDialog = new Dialog(tabbedMain.this);
+        settingsDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        settingsDialog.setContentView(getLayoutInflater().inflate(R.layout.activity_wait_for_beam
+                , null));
+
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -78,7 +89,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             public void onClick(View view) {
             if(checkForNFC()){
                 nfc.setNdefPushMessageCallback(tabbedMain.this, tabbedMain.this);
-                Toast.makeText(context, "tap another phone!" , Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, "tap another phone!" , Toast.LENGTH_SHORT).show();
+                settingsDialog.show();
+
             }}
         });
     }
