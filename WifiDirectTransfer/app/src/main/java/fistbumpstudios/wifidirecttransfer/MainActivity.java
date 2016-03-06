@@ -3,6 +3,7 @@ package fistbumpstudios.wifidirecttransfer;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Thread clientThread = null;
     public static final int SERVERPORT = 8080;
     private InetAddress serverAddr = null;
+    public String p2p_mac_address = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
 
         private Socket clientSocket;
         private byte[] buffer = new byte[1024];
-        private int buffer_to_int(byte[] bytes, int offset)
+        private int buffer_to_int(byte[] bytes)
         {
             return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16)
                     | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
@@ -177,36 +178,63 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
 
             try {
+                // in order to understand what the hell is going on here, you need to know the protocol
+                // the first four bytes contain then option integer, this specifies what kind of transmission this is
+                // the second four bytes define int name_size
+                // the third four bytes define int dst_size
+                // the fourth four bytes define int text_size
+                // the next name_size bytes define name of user who sent the message or the name of the file
+                // the next dst_size bytes define the destination user if applicable
+                // the next text_size bytes define the the contents of the message or file
                 InputStream is = this.clientSocket.getInputStream();
                 int bytesread;
                 while(!Thread.currentThread().isInterrupted()) {
 
                     //ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                    String what = "";
+                    String what = ""; // this string is used for debugging purposes
 
+                    // int option is the type of message
+                    // 1 means message to be distributed
+                    // 2 means file to be distributed
+                    // 3 means send friend request
+                    // 4 means send friend picture
                     bytesread = is.read(buffer, 0, 4);
-                    int option = buffer_to_int(buffer, 0);
+                    int option = buffer_to_int(buffer);
                     for (int i = 0; i < bytesread; ++i)
                       what += buffer[i] + ".";
                     what += " ";
 
+                    // int name_size is the size in bytes of the name portion
                     bytesread = is.read(buffer, 0, 4);
-                    int name_size = buffer_to_int(buffer, 0);
+                    int name_size = buffer_to_int(buffer);
                     for (int i = 0; i < bytesread; ++i)
                         what += buffer[i] + ".";
                     what += " ";
 
+                    // int dst_size is the size in bytes of the destination portion
                     bytesread = is.read(buffer, 0, 4);
-                    int text_size = buffer_to_int(buffer, 0);
+                    int dst_size = buffer_to_int(buffer);
                     for (int i = 0; i < bytesread; ++i)
                         what += buffer[i] + ".";
                     what += "\n";
-                    display_message(what);
 
+                    // int text_size is the size in bytes of the text portion
+                    bytesread = is.read(buffer, 0, 4);
+                    int text_size = buffer_to_int(buffer);
+                    for (int i = 0; i < bytesread; ++i)
+                        what += buffer[i] + ".";
+                    what += "\n";
+                    //display_message(what);
+
+                    // String name is the name of length name_size
                     byte name_byte_arr[] = new byte [name_size];
                     bytesread = is.read(name_byte_arr, 0, name_size);
-
                     String name = new String(name_byte_arr, "UTF-8");
+
+                    // String destination is the mac of who the message goes to
+                    byte dst_byte_arr[] = new byte [dst_size];
+                    bytesread = is.read(dst_byte_arr, 0, dst_size);
+                    String destination = new String(dst_byte_arr, "UTF-8");
 
                     if (option == 1) // message
                     {
@@ -216,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                         String text = new String(text_byte_arr, "UTF-8");
                         display_message(name + ": " + text + "\n");
                         if (serverSocket != null) // if server, redistribute
-                            send_message(name, text, Collections.singleton(clientSocket));
+                            send_message(name, text, clientSocket);
                     }
                     else if (option == 2) // file
                     {
@@ -236,12 +264,27 @@ public class MainActivity extends AppCompatActivity {
 
                         display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
                         if (serverSocket != null) // redistribute file if server
-                            send_file(file.getPath(), file.getName(), Collections.singleton(clientSocket));
+                            send_file(file.getPath(), file.getName(), clientSocket);
+                    }
+                    else if (option == 3)
+                    {
+                        // TODO: send friend request
+                        // name is our name
+                        // dest is friend's mac address
+                        // text is our mac address
+                    }
+                    else if (option == 4)
+                    {
+                        // TODO: send friend picture
+                        // name is our name
+                        // dest is friend's mac address
+                        // text is the picture file to be sent
                     }
                     else // error, we just kill the current thread and try again with a new one.
                     {
                         display_message("Something weird happened\n");
                         if (serverSocket == null) {
+                            clientSockets.clear();
                             clientThread = new Thread(new ClientThread());
                             clientThread.start();
                         }
@@ -318,7 +361,8 @@ public class MainActivity extends AppCompatActivity {
     // send_file sends a file to everybody
     // file_path is the path of the file
     // file_name is what the file will be called when created
-    private void send_file(String file_path, String file_name, Collection<Socket> to_exclude)
+    // to_exclude is the socket to be ignored on send, used by server
+    private void send_file(String file_path, String file_name, Socket to_exclude)
     {
         if (!clientSockets.isEmpty()) {
             int option = 2;
@@ -345,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
             for (Socket clientSocket : clientSockets) {
                 try {
                     if (to_exclude != null)
-                        if (to_exclude.contains(clientSocket))
+                        if (to_exclude.equals(clientSocket))
                             continue;
                     if (!clientSocket.isConnected())
                     {
@@ -356,8 +400,9 @@ public class MainActivity extends AppCompatActivity {
                     OutputStream outputStream = clientSocket.getOutputStream();
                     copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
                     copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-                    copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 8, 4);
-                    outputStream.write(bytes, 0, 12);
+                    copy_Byte_Array(bytes, int_To_Byte_Array(0), 8, 4); // dst_length
+                    copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 12, 4);
+                    outputStream.write(bytes, 0, 16);
                     outputStream.write(name.getBytes());
 
                     InputStream in = new FileInputStream(file);
@@ -387,44 +432,95 @@ public class MainActivity extends AppCompatActivity {
     // send_message sends a message to everybody
     // name is the name of the sender
     // message is the message to be sent
-    // to_exclude are the sockets to be ignored on send
-    private void send_message(String name, String message, Collection<Socket> to_exclude)
+    // to_exclude is the socket to be ignored on send, used by server
+    private void send_message(String name, String message, Socket to_exclude)
     {
         int option = 1;
         int message_length = message.length();
         int name_length = name.length();
-        byte bytes[] = new byte[1024];
+        byte bytes[] = new byte[16];
         copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
         copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-        copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 8, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(0), 8, 4); // dst_length
+        copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 12, 4);
 
-        //for (int i = 0; i < 12; ++i)
-        //display_message(String.valueOf(bytes[i]));
-
-        //display_message(name + text);
         Collection<Socket> to_remove = new ArrayList<Socket>();
 
         for (Socket clientSocket : clientSockets) {
             try {
-                if (to_exclude != null)
-                    if (to_exclude.contains(clientSocket))
+                if (to_exclude != null) // skips excluded sockets
+                    if (to_exclude.equals(clientSocket))
                         continue;
-                if (!clientSocket.isConnected())
+                if (!clientSocket.isConnected()) // skips and removes dead sockets
                 {
                     to_remove.add(clientSocket);
                     continue;
                 }
                 DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
 
-                outputStream.write(bytes, 0, 12);
-                outputStream.write(name.getBytes());
-                outputStream.write(message.getBytes());
+                outputStream.write(bytes, 0, 16); // write 16 protocol bytes
+                outputStream.write(name.getBytes()); // writes name of sender
+                outputStream.write(message.getBytes()); // writes message
 
             } catch (IOException e) {
                 e.printStackTrace();
+                // in the event of an exception, remove the socket
                 to_remove.add(clientSocket);
             }
         }
+        // removes bad sockets
+        for (Socket remove_socket : to_remove)
+        {
+            clientSockets.remove(remove_socket);
+        }
+        to_remove.clear();
+    }
+
+    // send_message sends a message to everybody
+    // name is the name of the sender
+    // mac_address is mac of friend
+    // to_exclude is the socket to be ignored on send, used by server
+    private void send_friend_request(String name, String friend_mac_address, Socket to_exclude)
+    {
+        int option = 1;
+        int name_length = name.length();
+        int dst_length = friend_mac_address.length();
+        String our_mac_address = p2p_mac_address;
+
+        int message_length = our_mac_address.length();
+
+        byte bytes[] = new byte[16];
+        copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(dst_length), 8, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 12, 4);
+
+        Collection<Socket> to_remove = new ArrayList<Socket>();
+
+        for (Socket clientSocket : clientSockets) {
+            try {
+                if (to_exclude != null) // skips excluded sockets
+                    if (to_exclude.equals(clientSocket))
+                        continue;
+                if (!clientSocket.isConnected()) // skips and removes dead sockets
+                {
+                    to_remove.add(clientSocket);
+                    continue;
+                }
+                DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+                outputStream.write(bytes, 0, 16); // write 16 protocol bytes
+                outputStream.write(name.getBytes()); // writes name of sender
+                outputStream.write(friend_mac_address.getBytes()); // writes friend mac
+                outputStream.write(our_mac_address.getBytes()); // writes message
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                // in the event of an exception, remove the socket
+                to_remove.add(clientSocket);
+            }
+        }
+        // removes bad sockets
         for (Socket remove_socket : to_remove)
         {
             clientSockets.remove(remove_socket);
