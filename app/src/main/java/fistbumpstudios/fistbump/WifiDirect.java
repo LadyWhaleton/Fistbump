@@ -7,6 +7,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,53 +27,23 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WifiDirect extends AppCompatActivity {
-    private final IntentFilter intentFilter = new IntentFilter();
-    //public static WifiP2pManager mManager;
-    //public static WifiP2pManager.Channel mChannel;
-    BroadcastReceiver mReceiver;
-    IntentFilter mIntentFilter;
+public class WifiDirect {
+
+    public static WifiP2pManager mManager;
+    public static WifiP2pManager.Channel mChannel;
+    public static BroadcastReceiver mReceiver;
+    public static IntentFilter mIntentFilter;
     TextView message_area;
     TextView input_area;
-    private ServerSocket serverSocket;
-    private Collection<Socket> clientSockets = new ArrayList<Socket>();
-    private Map<String, Socket> mac_to_socket_map = new HashMap<String, Socket>();
-    Thread serverThread = null;
-    Thread clientThread = null;
+    public static ServerSocket serverSocket;
+    public static Collection<Socket> clientSockets = new ArrayList<Socket>();
+    public static  Map<String, Socket> mac_to_socket_map = new HashMap<String, Socket>();
+    public static Thread serverThread = null;
+    public static Thread clientThread = null;
     public static final int SERVERPORT = 8080;
-    private InetAddress serverAddr = null;
-    public String p2p_mac_address = null;
+    public static InetAddress serverAddr = null;
+    public static String p2p_mac_address = null;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_direct);
-        message_area = (TextView) findViewById(R.id.message_area);
-        input_area = (TextView) findViewById(R.id.input_area);
-
-        //  Indicates a change in the Wi-Fi P2P status.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-
-        // Indicates a change in the list of available peers.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-
-        // Indicates the state of Wi-Fi P2P connectivity has changed.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-
-        // Indicates this device's details have changed.
-        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        tabbedMain.SharedData.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        tabbedMain.SharedData.mChannel = tabbedMain.SharedData.mManager.initialize(this, getMainLooper(), null);
-        mReceiver = new WiFiDirectBroadcastReceiver(tabbedMain.SharedData.mManager, tabbedMain.SharedData.mChannel, this);
-
-        mIntentFilter = new IntentFilter();
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-    }
 
     private static byte[] int_To_Byte_Array(int value) {
         return new byte[] {
@@ -100,21 +71,21 @@ public class WifiDirect extends AppCompatActivity {
             send_file(Environment.getExternalStorageDirectory()
                     .getAbsolutePath() + File.separator + "test.jpg", "test.jpg", null);
     }
-    public void make_server_thread()
+    public static void make_server_thread()
     {
         display_message("I am a server!\n");
-        this.serverThread = new Thread(new ServerThread());
-        this.serverThread.start();
+        serverThread = new Thread(new ServerThread());
+        serverThread.start();
     }
-    public void make_client_thread(InetAddress server_addr)
+    public static void make_client_thread(InetAddress server_addr)
     {
         display_message("I am a client!\n");
         serverAddr = server_addr;
-        this.clientThread = new Thread(new ClientThread());
-        this.clientThread.start();
+        clientThread = new Thread(new ClientThread());
+        clientThread.start();
     }
 
-    class ServerThread implements Runnable {
+    static class ServerThread implements Runnable {
 
         public void run() {
             Socket socket = null;
@@ -133,7 +104,7 @@ public class WifiDirect extends AppCompatActivity {
                         socket.getInputStream().read(client_mac_address_buffer, 0, 17);
                         String client_mac_address = new String(client_mac_address_buffer, "UTF-8");
                         mac_to_socket_map.put(client_mac_address, socket);
-                        display_message(mac_to_socket_map.toString());
+                        display_message(mac_to_socket_map.toString() + "\n");
 
                         clientSockets.add(socket);
                         CommunicationThread commThread = new CommunicationThread(socket);
@@ -147,7 +118,7 @@ public class WifiDirect extends AppCompatActivity {
         }
     }
 
-    class ClientThread implements Runnable {
+    static class ClientThread implements Runnable {
         private Socket clientSocket;
 
         public void run() {
@@ -179,7 +150,7 @@ public class WifiDirect extends AppCompatActivity {
     // comm thread is what sits and listens to what gets sent to the socket
     // if the phone is a client, only one comm thread exists and listens to what the server sends
     // if the phone is a server, the phone spawns a comm thread for each client
-    class CommunicationThread implements Runnable {
+    static class CommunicationThread implements Runnable {
 
         private Socket clientSocket;
         private byte[] buffer = new byte[1024];
@@ -242,7 +213,6 @@ public class WifiDirect extends AppCompatActivity {
                     for (int i = 0; i < bytesread; ++i)
                         what += buffer[i] + ".";
                     what += "\n";
-                    //display_message(what);
 
                     // String name is the name of length name_size
                     byte name_byte_arr[] = new byte [name_size];
@@ -312,7 +282,7 @@ public class WifiDirect extends AppCompatActivity {
                     //for (int i = 0; i < bytesread; ++i)
                     //  what += (char)buffer[i];
 
-                    //display_message(what + "\n");
+                    display_message(what + "\n");
 
                 }
             } catch (IOException e) {
@@ -325,21 +295,21 @@ public class WifiDirect extends AppCompatActivity {
     }
 
 
-
+/*
     @Override
     protected void onResume() {
         super.onResume();
         registerReceiver(mReceiver, mIntentFilter);
     }
 
-    /* unregister the broadcast receiver */
+    // unregister the broadcast receiver
     @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
-    }
+    }*/
 
-    public void display_message(String message) {
+    /*public void display_message(String message) {
         final String msg = message;
         WifiDirect.this.runOnUiThread(new Runnable() {
 
@@ -349,13 +319,16 @@ public class WifiDirect extends AppCompatActivity {
                 message_area.append(msg);
             }
         });
+    }*/
+    static public void display_message(String message) {
+        Log.d("DEBUG", message);
     }
 
     // send_file sends a file to everybody
     // file_path is the path of the file
     // file_name is what the file will be called when created
     // to_exclude is the socket to be ignored on send, used by server
-    private void send_file(String file_path, String file_name, Socket to_exclude)
+    static public void send_file(String file_path, String file_name, Socket to_exclude)
     {
         if (!clientSockets.isEmpty()) {
             int option = 2;
@@ -426,7 +399,7 @@ public class WifiDirect extends AppCompatActivity {
     // name is the name of the sender
     // message is the message to be sent
     // to_exclude is the socket to be ignored on send, used by server
-    private void send_message(String name, String message, Socket to_exclude)
+    static public void send_message(String name, String message, Socket to_exclude)
     {
         int option = 1;
         int message_length = message.length();
@@ -473,7 +446,7 @@ public class WifiDirect extends AppCompatActivity {
     // name is the name of the sender
     // mac_address is mac of friend
     // to_exclude is the socket to be ignored on send, used by server
-    private void send_friend_request(String name, String friend_mac_address, Socket to_exclude)
+    static public void send_friend_request(String name, String friend_mac_address, Socket to_exclude)
     {
         int option = 1;
         int name_length = name.length();

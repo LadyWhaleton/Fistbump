@@ -3,6 +3,7 @@ package fistbumpstudios.fistbump;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NdefMessage;
@@ -83,6 +84,19 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+
+        WifiDirect.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        WifiDirect.mChannel = WifiDirect.mManager.initialize(this, getMainLooper(), null);
+        WifiDirect.mReceiver = new WiFiDirectBroadcastReceiver(WifiDirect.mManager, WifiDirect.mChannel, this);
+
+        WifiDirect.mIntentFilter = new IntentFilter();
+        WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        peer_discovery_thread = new Thread(new Peer_discovery_thread());
+        peer_discovery_thread.start();
 
         nfc = NfcAdapter.getDefaultAdapter(this);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -214,12 +228,25 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         return ndefMessage;
     }
 
-    class peer_discovery_thread implements Runnable {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(WifiDirect.mReceiver, WifiDirect.mIntentFilter);
+    }
+
+    // unregister the broadcast receiver
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(WifiDirect.mReceiver);
+    }
+
+    class Peer_discovery_thread implements Runnable {
 
         public void run() {
             while (true){
                 try {
-                    SharedData.mManager.discoverPeers(SharedData.mChannel, new WifiP2pManager.ActionListener() {
+                    WifiDirect.mManager.discoverPeers(WifiDirect.mChannel, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
                             Context context = getApplicationContext();
@@ -229,21 +256,16 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
                         @Override
                         public void onFailure(int reasonCode) {
-
+                            Context context = getApplicationContext();
+                            Toast.makeText(context, "Woopsydasicals!", Toast.LENGTH_SHORT).show();
                         }
                     });
-                    Thread.sleep(5000);
+                    Thread.sleep(10000);
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         }
-    }
-
-    public static class SharedData
-    {
-        public static WifiP2pManager mManager;
-        public static WifiP2pManager.Channel mChannel;
     }
 }

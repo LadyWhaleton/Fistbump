@@ -29,13 +29,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private WifiP2pManager mManager;
     private WifiP2pManager.Channel mChannel;
-    private WifiDirect activity;
+    private tabbedMain activity;
     public static WifiP2pManager.PeerListListener myPeerListListener;
     private Set<String> connected_devices = new HashSet<String>();
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     private boolean connect_flag;
 
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, WifiDirect activity)
+    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, WifiP2pManager.Channel channel, tabbedMain activity)
     {
         super();
         this.mManager = manager;
@@ -72,12 +72,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 // Do whatever tasks are specific to the group owner.
                 // One common case is creating a server thread and accepting
                 // incoming connections.
-                activity.make_server_thread();
+                WifiDirect.make_server_thread();
             } else if (info.groupFormed) {
                 // The other device acts as the client. In this case,
                 // you'll want to create a client thread that connects to the group
                 // owner.
-                activity.make_client_thread(groupOwnerAddress);
+                WifiDirect.make_client_thread(groupOwnerAddress);
             }
 
 
@@ -180,8 +180,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             WifiP2pDevice device = (WifiP2pDevice) intent
                     .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
 
-            activity.p2p_mac_address = device.deviceAddress;
-            activity.display_message(device.deviceAddress + "\n");
+            WifiDirect.p2p_mac_address = device.deviceAddress;
+            WifiDirect.display_message(device.deviceAddress + "\n");
 
 
 
