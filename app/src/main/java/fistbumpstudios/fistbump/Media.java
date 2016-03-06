@@ -3,6 +3,8 @@ package fistbumpstudios.fistbump;
 import android.content.ContentResolver;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
@@ -19,6 +21,7 @@ public class Media {
     File mediaFile; // not sure if we will need this.
 
     private String fileName;
+    private String mediaPath;
     private String timeReceived;
     private String mediaType;
     private String mimeType;
@@ -28,9 +31,24 @@ public class Media {
     private String id;
     private Uri ownerProfilePic;
 
-    Media (String fileName, String timeReceived, Buddy sender)
+
+    // This constructor is called when a message is being loaded from a log
+    Media (String fileName, String mediaPath, String timeReceived, String ownerName, String id)
     {
         this.fileName = fileName;
+        this.mediaPath = mediaPath;
+        this.timeReceived = timeReceived;
+        this.ownerName = ownerName;
+        this.id = id;
+
+        setMediaType();
+    }
+
+    // This constructor is called when a message is sent
+    Media (String fileName, String mediaPath, String timeReceived, Buddy sender)
+    {
+        this.fileName = fileName;
+        this.mediaPath = mediaPath;
         this.timeReceived = timeReceived;
         this.ownerName = sender.getName();
         this.id = sender.getID();
@@ -71,36 +89,37 @@ public class Media {
         return this.mediaType;
     }
 
-    public String getMediaPath(String fistbumpFolder)
+    public String getMimeType()
     {
-        return fistbumpFolder + fileName;
+        return this.mimeType;
     }
 
-    public static Bitmap getThumbnail(ContentResolver cr, String path)
+    public String getMediaPath()
+    {
+        return mediaPath;
+    }
+
+    public Bitmap getThumbnail(ContentResolver cr)
     {
         // video thumbnail: http://stackoverflow.com/questions/32517124/how-to-create-video-thumbnail-from-video-file-path-in-android
         // http://androidsrc.net/create-thumbnail-video-android-application/
-
         // http://stackoverflow.com/questions/8383377/android-get-thumbnail-of-image-stored-on-sdcard-whose-path-is-known
 
-        //getContentResolver
-        Cursor ca = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.MediaColumns._ID }, MediaStore.MediaColumns.DATA + "=?", new String[] {path}, null);
-        if (ca != null && ca.moveToFirst()) {
-            int id = ca.getInt(ca.getColumnIndex(MediaStore.MediaColumns._ID));
-            ca.close();
+        // check the file type of the media. Is it an image, video, or song?
+        if (this.mediaType.equals("image"))
+            return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(this.mediaPath), 256, 256);
 
-            // if you want a larger thumbnail use, MINI_KIND
-            return MediaStore.Images.Thumbnails.getThumbnail(cr, id, MediaStore.Images.Thumbnails.MICRO_KIND, null );
-        }
+        else if (this.mediaType.equals("video"))
+            return ThumbnailUtils.createVideoThumbnail(mediaPath, MediaStore.Images.Thumbnails.MINI_KIND);
 
-        ca.close();
-        return null;
+        else
+            return null;
 
     }
 
-    public Uri getUriFromFileName(String fistbumpFolder)
+    public Uri getUriFromFileName()
     {
-        return Uri.fromFile(new File (getMediaPath(fistbumpFolder)) );
+        return Uri.fromFile(new File (getMediaPath()) );
         //Bitmap thumbnail = getPreview(uri);
     }
 

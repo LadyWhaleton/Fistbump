@@ -1,13 +1,12 @@
 package fistbumpstudios.fistbump;
 
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -46,15 +48,8 @@ public class MediaGalleryTab extends Fragment {
     public static List<Media> mediaList;
 
     // TODO: Temporary hardcoded images. Need to use directory.
-    private int[] images = {
-            R.drawable.wailord,
-            R.drawable.wailord,
-            R.drawable.wailord,
-            R.drawable.wailord,
-            R.drawable.wailord,
-            R.drawable.wailord,
-            R.drawable.wailord
-    };
+    private int defaultSongCover = R.drawable.default_song_cover;
+    private int defaultFileIcon = R.drawable.file_icon_generic_file;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -111,10 +106,10 @@ public class MediaGalleryTab extends Fragment {
 
         if(!fistbumpFolder.exists()) {
             fistbumpFolder.mkdirs();
-            Toast.makeText(getContext(), fistbumpFolder + " created!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), fistbumpFolder + " created!", Toast.LENGTH_SHORT).show();
         }
         else {
-            Toast.makeText(getContext(), fistbumpFolder + " already exists!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), fistbumpFolder + " already exists!", Toast.LENGTH_SHORT).show();
         }
 
         mediaList = new ArrayList<>();
@@ -133,35 +128,41 @@ public class MediaGalleryTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                /** http://www.edumobile.org/android/get-file-extension-and-mime-type-in-android-development/
-                 * http://stackoverflow.com/questions/8589645/how-to-determine-mime-type-of-file-in-android
-                 * File selected = new File(fileList.get(position));
-                 if(selected.isDirectory()){
-                 ListDir(selected);
-                 }else {
-                 Uri selectedUri = Uri.fromFile(selected);
-                 String fileExtension
-                 = MimeTypeMap.getFileExtensionFromUrl(selectedUri.toString());
-                 String mimeType
-                 = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
-
-                 Toast.makeText(GetFileExtensionWithMIMEType.this,
-                 "FileExtension: " + fileExtension + "n" +
-                 "MimeType: " + mimeType,
-                 Toast.LENGTH_LONG).show();
-                 *
-                 */
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                Uri uri = mediaList.get(position).getUriFromFileName();
+                intent.setDataAndType(uri, mediaList.get(position).getMimeType());
+                startActivity(intent);
 
                 /**
-                 * Intent intent = new Intent();
-                 * intent.setAction(Intent.ACTION_VIEW);
-                 * Uri path = Uri.parse(File[position].getMediaPath(folderName));
-                 * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
-                 * startActivity(intent);
-                 */
+                 if (mediaList.get(position).getMediaType().equals("image"))
+                 {
+                 Intent intent = new Intent();
+                 intent.setAction(Intent.ACTION_VIEW);
+                 Uri uri = mediaList.get(position).getUriFromFileName();
+                 intent.setDataAndType(uri, "image/*");
+                 startActivity(intent);
+                 }
 
-                Toast.makeText(getContext(), String.valueOf(position), Toast.LENGTH_SHORT).show();
+                 else if ( mediaList.get(position).getMediaType().equals("video")) {
+                 Intent intent = new Intent();
+                 intent.setAction(Intent.ACTION_VIEW);
+                 Uri uri = mediaList.get(position).getUriFromFileName();
+                 intent.setDataAndType(uri, "video/*");
+                 startActivity(intent);
+                 }
+                 else if ( mediaList.get(position).getMediaType().equals("audio"))
+                 {
+                 Intent intent = new Intent();
+                 intent.setAction(Intent.ACTION_VIEW);
+                 Uri uri = mediaList.get(position).getUriFromFileName();
+                 intent.setDataAndType(uri, "audio/*");
+                    startActivity(intent);
+                }
 
+                else
+                    Toast.makeText(getContext(), mediaList.get(position).getMediaType(), Toast.LENGTH_SHORT).show();
+                    */
             }
         });
     }
@@ -220,10 +221,24 @@ public class MediaGalleryTab extends Fragment {
         // TODO: Implement LoadMedia
         // Get MediaList log file
 
+
         File FistbumpDir = new File(folderName);
         File[] FistbumpMediaFiles = FistbumpDir.listFiles();
 
-        Toast.makeText(getContext(), String.valueOf(FistbumpDir.length()), Toast.LENGTH_SHORT).show();
+        /** Toast.makeText(getContext(), String.valueOf(FistbumpMediaFiles.length), Toast.LENGTH_SHORT).show();
+
+        for (File f : FistbumpMediaFiles)
+            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
+         */
+
+        // For each file, create a Media object
+        for (File f: FistbumpMediaFiles)
+        {
+            // TODO: remove this hardcoded values
+            DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+            String timeCreated = df.format(new Date());
+            mediaList.add( new Media (f.getName(), f.toString(), timeCreated, "Wailord", "1337") );
+        }
 
         // Update the Media Gallery
         LiveUpdateMedia();
@@ -237,8 +252,8 @@ public class MediaGalleryTab extends Fragment {
     private void LiveUpdateMedia()
     {
         // TODO: Implement LiveUpdateMedia
-        // galleryGridView.setAdapter(new MediaGalleryAdapter(getActivity()));
-        galleryGridView.setAdapter(new ImageAdapter());
+        galleryGridView.setAdapter(new MediaGalleryAdapter(getActivity()));
+        // galleryGridView.setAdapter(new ImageAdapter());
     }
 
     // TODO: Implement the Adapter
@@ -260,61 +275,31 @@ public class MediaGalleryTab extends Fragment {
                 view = inflater.inflate(R.layout.gridview_media_info, parent, false);
             }
 
+            // obtain a thumbnail for the media
             ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
-            gallery_item.setImageDrawable(getResources().getDrawable(images[position]));
+            Bitmap thumbnail = mediaList.get(position).getThumbnail(getContext().getContentResolver());
 
+            // set the thumbnail according to it's file type (image, video, audio, etc)
+            if (thumbnail != null)
+                gallery_item.setImageBitmap(thumbnail);
 
-            // here we set the thumbnail of the image according to the path
-            // gallery_item.setImageURI( Uri.parse(mediaList.get(position).toString()) );
-
-
-
-            return view;
-        }
-
-    }
-
-
-    // TODO: REMOVE
-    public class ImageAdapter extends BaseAdapter
-    {
-
-        @Override
-        public int getCount() {
-            return images.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return images[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            // if there's no instance of this view
-            if (view == null){
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                view = inflater.inflate(R.layout.gridview_media_info, parent, false);
+            else
+            {
+                if ( mediaList.get(position).getMediaType().equals("audio") )
+                    gallery_item.setImageDrawable(getResources().getDrawable(defaultSongCover));
+                else
+                    gallery_item.setImageDrawable(getResources().getDrawable(defaultFileIcon));
             }
 
-            ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
+            // set the profile pic of the sender
 
-            // set thumbnail of media
-            gallery_item.setImageDrawable(getResources().getDrawable(images[position]));
-
-            // set profile picture of owner
-
-            // set timestamp of when media was created
+            // set the timestamp
+            TextView timestamp = (TextView) view.findViewById(R.id.gallery_item_timestamp);
+            timestamp.setText(mediaList.get(position).getTimestamp());
 
             return view;
         }
-    }
 
+    }
 
 }
