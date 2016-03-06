@@ -1,7 +1,6 @@
 package fistbumpstudios.fistbump;
 
 import android.content.ContentResolver;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
@@ -10,6 +9,7 @@ import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.util.Date;
 
 /**
  * Created by Sephi on 3/1/2016.
@@ -22,6 +22,7 @@ public class Media {
 
     private String fileName;
     private String mediaPath;
+    private Date dateTime;
     private String timeReceived;
     private String mediaType;
     private String mimeType;
@@ -101,10 +102,6 @@ public class Media {
 
     public Bitmap getThumbnail(ContentResolver cr)
     {
-        // video thumbnail: http://stackoverflow.com/questions/32517124/how-to-create-video-thumbnail-from-video-file-path-in-android
-        // http://androidsrc.net/create-thumbnail-video-android-application/
-        // http://stackoverflow.com/questions/8383377/android-get-thumbnail-of-image-stored-on-sdcard-whose-path-is-known
-
         // check the file type of the media. Is it an image, video, or song?
         if (this.mediaType.equals("image"))
             return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(this.mediaPath), 256, 256);
@@ -120,7 +117,6 @@ public class Media {
     public Uri getUriFromFileName()
     {
         return Uri.fromFile(new File (getMediaPath()) );
-        //Bitmap thumbnail = getPreview(uri);
     }
 
     /** This function takes the time the file was received and gets the difference between

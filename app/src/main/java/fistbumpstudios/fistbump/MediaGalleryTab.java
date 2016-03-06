@@ -3,6 +3,7 @@ package fistbumpstudios.fistbump;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -235,7 +236,7 @@ public class MediaGalleryTab extends Fragment {
         for (File f: FistbumpMediaFiles)
         {
             // TODO: remove this hardcoded values
-            DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+            DateFormat df = new SimpleDateFormat("MMM d',' yyyy 'at' h:mm a");
             String timeCreated = df.format(new Date());
             mediaList.add( new Media (f.getName(), f.toString(), timeCreated, "Wailord", "1337") );
         }
@@ -292,6 +293,8 @@ public class MediaGalleryTab extends Fragment {
             }
 
             // set the profile pic of the sender
+            ImageView ownerProfilePic = (ImageView) view.findViewById(R.id.media_profile_pic);
+            ownerProfilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile_gray));
 
             // set the timestamp
             TextView timestamp = (TextView) view.findViewById(R.id.gallery_item_timestamp);
