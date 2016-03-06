@@ -1,34 +1,27 @@
 package fistbumpstudios.fistbump;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class setProfilePic extends AppCompatActivity {
     static int RESULT_LOAD_IMAGE = 1;
     String picturePath ="";
 
     private void writePicPath() {
-
-        try {
-            FileOutputStream fos = openFileOutput(setUserName.userFilename, Context.MODE_PRIVATE |MODE_APPEND);
-            fos.write((picturePath + "\n").getBytes());
-            fos.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("profilePic", picturePath);
+        editor.apply();
     }
 
         @Override
