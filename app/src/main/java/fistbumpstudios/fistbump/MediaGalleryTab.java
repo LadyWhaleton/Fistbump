@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -154,8 +155,7 @@ public class MediaGalleryTab extends Fragment {
                 /**
                  * Intent intent = new Intent();
                  * intent.setAction(Intent.ACTION_VIEW);
-                 * Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
-                 * Uri path = Uri.parse(File[position].toString());
+                 * Uri path = Uri.parse(File[position].getMediaPath(folderName));
                  * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
                  * startActivity(intent);
                  */
@@ -218,8 +218,12 @@ public class MediaGalleryTab extends Fragment {
     private void LoadMedia()
     {
         // TODO: Implement LoadMedia
-        // Load Media from storage here
+        // Get MediaList log file
 
+        File FistbumpDir = new File(folderName);
+        File[] FistbumpMediaFiles = FistbumpDir.listFiles();
+
+        Toast.makeText(getContext(), String.valueOf(FistbumpDir.length()), Toast.LENGTH_SHORT).show();
 
         // Update the Media Gallery
         LiveUpdateMedia();
@@ -238,7 +242,7 @@ public class MediaGalleryTab extends Fragment {
     }
 
     // TODO: Implement the Adapter
-    /*
+
     public class MediaGalleryAdapter extends ArrayAdapter<Media>
     {
 
@@ -269,7 +273,7 @@ public class MediaGalleryTab extends Fragment {
         }
 
     }
-    */
+
 
     // TODO: REMOVE
     public class ImageAdapter extends BaseAdapter
@@ -299,11 +303,14 @@ public class MediaGalleryTab extends Fragment {
                 view = inflater.inflate(R.layout.gridview_media_info, parent, false);
             }
 
-            // display owner profile pic
-            // display timestamp
-
             ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
+
+            // set thumbnail of media
             gallery_item.setImageDrawable(getResources().getDrawable(images[position]));
+
+            // set profile picture of owner
+
+            // set timestamp of when media was created
 
             return view;
         }

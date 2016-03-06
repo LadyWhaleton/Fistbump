@@ -179,6 +179,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             // Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+            WifiP2pDevice device = (WifiP2pDevice) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+
+            activity.p2p_mac_address = device.deviceAddress;
+            activity.display_message(device.deviceAddress + "\n");
+
+
 
             // Respond to this device's wifi state changing
         }

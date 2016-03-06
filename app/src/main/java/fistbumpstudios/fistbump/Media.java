@@ -39,7 +39,7 @@ public class Media {
         setMediaType();
     }
 
-    // This function should be called when you are creating a new media object aft
+    // This helper function should be called when you are creating a new media object
     private void setMediaType()
     {
         String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1,  fileName.length());
@@ -82,6 +82,8 @@ public class Media {
         // http://androidsrc.net/create-thumbnail-video-android-application/
 
         // http://stackoverflow.com/questions/8383377/android-get-thumbnail-of-image-stored-on-sdcard-whose-path-is-known
+
+        //getContentResolver
         Cursor ca = cr.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.MediaColumns._ID }, MediaStore.MediaColumns.DATA + "=?", new String[] {path}, null);
         if (ca != null && ca.moveToFirst()) {
             int id = ca.getInt(ca.getColumnIndex(MediaStore.MediaColumns._ID));

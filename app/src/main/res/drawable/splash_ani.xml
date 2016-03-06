@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list
+    android:oneshot="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/splash_ani0_0"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_1"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_2"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_3"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_4"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_5"
+        android:duration="100" />
+
+    <!-- Repeat 1 -->
+    <item
+        android:drawable="@drawable/splash_ani0_0"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_1"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_2"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_3"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_4"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_5"
+        android:duration="100" />
+
+    <!-- Repeat 2 -->
+    <item
+        android:drawable="@drawable/splash_ani0_0"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_1"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_2"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_3"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_4"
+        android:duration="100" />
+    <item
+        android:drawable="@drawable/splash_ani0_5"
+        android:duration="100" />
+
+</animation-list>
