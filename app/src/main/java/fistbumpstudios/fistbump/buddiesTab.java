@@ -70,6 +70,9 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
                 macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
+
+
+
                 registerForContextMenu(buddylistView);
                 buddylistView.showContextMenuForChild(v);
                 unregisterForContextMenu(buddylistView);
@@ -165,6 +168,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             Intent intent = new Intent(getActivity() , conversation.class);
             intent.putExtra("name", buddyname);
             intent.putExtra("id", macAddr);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         }
         else if (item.getTitle() == "Edit") {
