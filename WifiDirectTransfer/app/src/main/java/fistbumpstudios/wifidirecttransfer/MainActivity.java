@@ -25,6 +25,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
@@ -36,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     TextView input_area;
     private ServerSocket serverSocket;
     private Collection<Socket> clientSockets = new ArrayList<Socket>();
+    private Map<String, Socket> mac_to_socket_map = new HashMap<String, Socket>();
     Thread serverThread = null;
     Thread clientThread = null;
     public static final int SERVERPORT = 8080;
@@ -142,10 +145,16 @@ public class MainActivity extends AppCompatActivity {
                     display_message("I am waiting for a client\n");
 
                     socket = serverSocket.accept();
-                    display_message("I have connected with a client\n");
-                    if (socket != null) {
-                        clientSockets.add(socket);
 
+                    if (socket != null) {
+                        display_message("I have connected with a client\n");
+                        byte[] client_mac_address_buffer = new byte[17];
+                        socket.getInputStream().read(client_mac_address_buffer, 0, 17);
+                        String client_mac_address = new String(client_mac_address_buffer, "UTF-8");
+                        mac_to_socket_map.put(client_mac_address, socket);
+                        display_message(mac_to_socket_map.toString());
+
+                        clientSockets.add(socket);
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
                     }
@@ -157,6 +166,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class ClientThread implements Runnable {
+        private Socket clientSocket;
+
+        public void run() {
+            while (true) {
+                try {
+                    clientSocket = new Socket(serverAddr, SERVERPORT);
+                    if (clientSocket != null) {
+                        display_message("I have connected with server\n");
+                        //DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+                        clientSocket.getOutputStream().write(p2p_mac_address.getBytes(), 0, 17);
+                        clientSockets.add(clientSocket);
+                        CommunicationThread commThread = new CommunicationThread(clientSocket);
+                        new Thread(commThread).start();
+                        break;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                try {
+                    Thread.sleep(5000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     // comm thread is what sits and listens to what gets sent to the socket
     // if the phone is a client, only one comm thread exists and listens to what the server sends
@@ -306,32 +343,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class ClientThread implements Runnable {
-        private Socket clientSocket;
 
-        public void run() {
-            while (true) {
-                try {
-                    clientSocket = new Socket(serverAddr, SERVERPORT);
-                    if (clientSocket != null) {
-                        display_message("I have connected with server\n");
-                        clientSockets.add(clientSocket);
-                        CommunicationThread commThread = new CommunicationThread(clientSocket);
-                        new Thread(commThread).start();
-                        break;
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    Thread.sleep(5000);
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     @Override
     protected void onResume() {
@@ -527,5 +539,4 @@ public class MainActivity extends AppCompatActivity {
         }
         to_remove.clear();
     }
-
 }
