@@ -14,9 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-
 public class setUserName extends AppCompatActivity {
 
 
@@ -44,15 +41,6 @@ public class setUserName extends AppCompatActivity {
         editor.putString("MAC", getMAC());
         editor.apply();
 
-        try {
-            FileOutputStream fos = openFileOutput(userFilename, Context.MODE_PRIVATE);
-            fos.write((username + "\n").getBytes());
-            fos.write((getMAC()+"\n").getBytes());
-            fos.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     public void verifyUsername(View view){
 

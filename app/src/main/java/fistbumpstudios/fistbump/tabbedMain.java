@@ -186,19 +186,6 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         String filepath =  getApplicationContext().getFilesDir() + "/" + setUserName.userFilename;
         File userfile = new File(filepath);
         BufferedReader br = null;
-//
-//        try {
-//            br = new BufferedReader(new FileReader(userfile));
-//            String line;
-//            while ((line = br.readLine()) != null) {
-//                message += line +";";
-//            }
-//            br.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            Toast.makeText(this, "cannot find userinfo", Toast.LENGTH_LONG).show();
-//        }
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String username = preferences.getString("UserName", null);
         String mac = preferences.getString("MAC", null);
