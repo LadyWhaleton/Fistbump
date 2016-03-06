@@ -50,10 +50,14 @@ public class conversation extends AppCompatActivity {
         convolistView = (ListView) findViewById(R.id.convList);
         context = getApplicationContext();
 
-        //to remove later
-        buddyName = "Stephanie";
-        id = "123123";
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            buddyName = extras.getString("name");
+            id = extras.getString("id");
+        }
+
         logFilename = buddyName + "_log.txt";
+        setTitle(buddyName);
 
         //load messageLogs
         try {
