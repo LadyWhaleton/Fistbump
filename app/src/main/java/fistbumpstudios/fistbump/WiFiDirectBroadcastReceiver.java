@@ -126,7 +126,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 for (int i = 0; i < peers.size(); ++i)
                 {
                     final WifiP2pDevice device = peers.get(i);
-                    if (!connected_devices.contains(device.deviceAddress)) {
+                    //TODO: update friend
+                    /*if (!connected_devices.contains(device.deviceAddress)) {
                         WifiP2pConfig config = new WifiP2pConfig();
                         config.deviceAddress = device.deviceAddress;
                         config.wps.setup = WpsInfo.PBC;
@@ -153,7 +154,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                         });
                         if (connect_flag)
                             break;
-                    }
+                    }*/
                 }
             }
 

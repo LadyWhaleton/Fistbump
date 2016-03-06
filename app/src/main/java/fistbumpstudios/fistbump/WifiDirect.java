@@ -28,8 +28,8 @@ import java.util.Map;
 
 public class WifiDirect extends AppCompatActivity {
     private final IntentFilter intentFilter = new IntentFilter();
-    WifiP2pManager mManager;
-    WifiP2pManager.Channel mChannel;
+    //public static WifiP2pManager mManager;
+    //public static WifiP2pManager.Channel mChannel;
     BroadcastReceiver mReceiver;
     IntentFilter mIntentFilter;
     TextView message_area;
@@ -62,9 +62,9 @@ public class WifiDirect extends AppCompatActivity {
         // Indicates this device's details have changed.
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mManager.initialize(this, getMainLooper(), null);
-        mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+        tabbedMain.SharedData.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        tabbedMain.SharedData.mChannel = tabbedMain.SharedData.mManager.initialize(this, getMainLooper(), null);
+        mReceiver = new WiFiDirectBroadcastReceiver(tabbedMain.SharedData.mManager, tabbedMain.SharedData.mChannel, this);
 
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -72,23 +72,6 @@ public class WifiDirect extends AppCompatActivity {
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
 
-    }
-
-    public void connect_button_press(View view) {
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "Finding people to connect to!", Toast.LENGTH_SHORT).show();
-
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-                Context context = getApplicationContext();
-                Toast.makeText(context, "Stop spamming the button fool!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private static byte[] int_To_Byte_Array(int value) {
@@ -271,7 +254,7 @@ public class WifiDirect extends AppCompatActivity {
                     bytesread = is.read(dst_byte_arr, 0, dst_size);
                     String destination = new String(dst_byte_arr, "UTF-8");
 
-                    if (option == 1) // message
+                    if (option == 1) // message to all
                     {
                         byte text_byte_arr[] = new byte [text_size];
                         bytesread = is.read(text_byte_arr, 0, text_size);
@@ -281,7 +264,7 @@ public class WifiDirect extends AppCompatActivity {
                         if (serverSocket != null) // if server, redistribute
                             send_message(name, text, clientSocket);
                     }
-                    else if (option == 2) // file
+                    else if (option == 2) // file to all
                     {
                         byte file_buffer[] = new byte[1024];
 
