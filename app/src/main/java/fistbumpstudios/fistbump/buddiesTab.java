@@ -168,6 +168,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             Intent intent = new Intent(getActivity() , conversation.class);
             intent.putExtra("name", buddyname);
             intent.putExtra("id", macAddr);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         }
         else if (item.getTitle() == "Edit") {
