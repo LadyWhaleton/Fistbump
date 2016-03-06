@@ -154,8 +154,7 @@ public class MediaGalleryTab extends Fragment {
                 /**
                  * Intent intent = new Intent();
                  * intent.setAction(Intent.ACTION_VIEW);
-                 * Uri path = Uri.parse("android.resource://fistbumpstudios.fistbump/" + images[position]);
-                 * Uri path = Uri.parse(File[position].toString());
+                 * Uri path = Uri.parse(File[position].getMediaPath(folderName));
                  * intent.setDataAndType(Uri.parse("directory://" + "filepath.jpg") type); // "image/*"
                  * startActivity(intent);
                  */
@@ -299,11 +298,14 @@ public class MediaGalleryTab extends Fragment {
                 view = inflater.inflate(R.layout.gridview_media_info, parent, false);
             }
 
-            // display owner profile pic
-            // display timestamp
-
             ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
+
+            // set thumbnail of media
             gallery_item.setImageDrawable(getResources().getDrawable(images[position]));
+
+            // set profile picture of owner
+
+            // set timestamp of when media was created
 
             return view;
         }

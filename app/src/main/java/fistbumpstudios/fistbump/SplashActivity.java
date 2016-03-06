@@ -1,14 +1,27 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 public class SplashActivity extends AppCompatActivity {
+
+    ImageView splash_iv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_screen);
+
+        splash_iv = (ImageView) findViewById(R.id.splash_iv);
+
+        AnimationDrawable animation = (AnimationDrawable) splash_iv.getBackground();
+        animation.start();
+
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
