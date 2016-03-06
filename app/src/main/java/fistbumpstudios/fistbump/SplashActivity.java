@@ -1,5 +1,6 @@
 package fistbumpstudios.fistbump;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.Image;
@@ -8,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
 
     ImageView splash_iv;
 
@@ -21,6 +22,12 @@ public class SplashActivity extends AppCompatActivity {
 
         AnimationDrawable animation = (AnimationDrawable) splash_iv.getBackground();
         animation.start();
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);

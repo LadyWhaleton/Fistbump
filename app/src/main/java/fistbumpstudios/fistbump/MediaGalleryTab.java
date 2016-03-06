@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -217,8 +218,12 @@ public class MediaGalleryTab extends Fragment {
     private void LoadMedia()
     {
         // TODO: Implement LoadMedia
-        // Load Media from storage here
+        // Get MediaList log file
 
+        File FistbumpDir = new File(folderName);
+        File[] FistbumpMediaFiles = FistbumpDir.listFiles();
+
+        Toast.makeText(getContext(), String.valueOf(FistbumpDir.length()), Toast.LENGTH_SHORT).show();
 
         // Update the Media Gallery
         LiveUpdateMedia();
@@ -237,7 +242,7 @@ public class MediaGalleryTab extends Fragment {
     }
 
     // TODO: Implement the Adapter
-    /*
+
     public class MediaGalleryAdapter extends ArrayAdapter<Media>
     {
 
@@ -268,7 +273,7 @@ public class MediaGalleryTab extends Fragment {
         }
 
     }
-    */
+
 
     // TODO: REMOVE
     public class ImageAdapter extends BaseAdapter
