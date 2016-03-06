@@ -119,6 +119,8 @@ public class MediaGalleryTab extends Fragment {
         galleryGridView.setEmptyView(emptyGridView);
         LoadMedia();
 
+        // TODO: replace load media with LiveUpdate. Move LoadMedia to tabbedMain
+
         setListClickListener();
 
     }
@@ -129,41 +131,17 @@ public class MediaGalleryTab extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                Uri uri = mediaList.get(position).getUriFromFileName();
-                intent.setDataAndType(uri, mediaList.get(position).getMimeType());
-                startActivity(intent);
-
-                /**
-                 if (mediaList.get(position).getMediaType().equals("image"))
-                 {
-                 Intent intent = new Intent();
-                 intent.setAction(Intent.ACTION_VIEW);
-                 Uri uri = mediaList.get(position).getUriFromFileName();
-                 intent.setDataAndType(uri, "image/*");
-                 startActivity(intent);
-                 }
-
-                 else if ( mediaList.get(position).getMediaType().equals("video")) {
-                 Intent intent = new Intent();
-                 intent.setAction(Intent.ACTION_VIEW);
-                 Uri uri = mediaList.get(position).getUriFromFileName();
-                 intent.setDataAndType(uri, "video/*");
-                 startActivity(intent);
-                 }
-                 else if ( mediaList.get(position).getMediaType().equals("audio"))
-                 {
-                 Intent intent = new Intent();
-                 intent.setAction(Intent.ACTION_VIEW);
-                 Uri uri = mediaList.get(position).getUriFromFileName();
-                 intent.setDataAndType(uri, "audio/*");
+                if (!mediaList.get(position).getMediaType().equals("?")) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    Uri uri = mediaList.get(position).getUriFromFileName();
+                    intent.setDataAndType(uri, mediaList.get(position).getMimeType());
                     startActivity(intent);
                 }
 
-                else
-                    Toast.makeText(getContext(), mediaList.get(position).getMediaType(), Toast.LENGTH_SHORT).show();
-                    */
+                else {
+                    Toast.makeText(getContext(), "You cannot view this file.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -299,6 +277,9 @@ public class MediaGalleryTab extends Fragment {
             // set the timestamp
             TextView timestamp = (TextView) view.findViewById(R.id.gallery_item_timestamp);
             timestamp.setText(mediaList.get(position).getTimestamp());
+
+            TextView fileExt = (TextView) view.findViewById((R.id.gallery_item_fileExt));
+            fileExt.setText(mediaList.get(position).getFileExt());
 
             return view;
         }
