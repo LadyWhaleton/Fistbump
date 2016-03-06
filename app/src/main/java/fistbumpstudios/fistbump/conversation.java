@@ -1,5 +1,6 @@
 package fistbumpstudios.fistbump;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -50,10 +51,15 @@ public class conversation extends AppCompatActivity {
         convolistView = (ListView) findViewById(R.id.convList);
         context = getApplicationContext();
 
-        //to remove later
-        buddyName = "Stephanie";
-        id = "123123";
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            buddyName = extras.getString("name");
+            id = extras.getString("id");
+        }
+
         logFilename = buddyName + "_log.txt";
+        ActionBar ab = getActionBar();
+        ab.setTitle(buddyName);
 
         //load messageLogs
         try {

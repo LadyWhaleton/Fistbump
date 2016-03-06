@@ -31,6 +31,8 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     public static List<Buddy> Buddies;
     ListView buddylistView;
     TextView emptyListView;
+
+    String buddyname, macAddr;
     public buddiesTab() {
     }
 
@@ -66,8 +68,8 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     private void setListClickListener(){
         buddylistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                String buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
-                String macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
+                buddyname = ((TextView) v.findViewById(R.id.BuddyName)).getText().toString();
+                macAddr = ((TextView) v.findViewById(R.id.MacAddress)).getText().toString();
                 registerForContextMenu(buddylistView);
                 buddylistView.showContextMenuForChild(v);
                 unregisterForContextMenu(buddylistView);
@@ -161,6 +163,9 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         if (item.getTitle() == "Send a Message") {
             Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getActivity() , conversation.class);
+            intent.putExtra("name", buddyname);
+            intent.putExtra("id", macAddr);
+
             startActivity(intent);
 
         }

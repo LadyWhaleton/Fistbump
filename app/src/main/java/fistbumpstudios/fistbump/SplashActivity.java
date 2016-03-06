@@ -3,10 +3,7 @@ package fistbumpstudios.fistbump;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.animation.Animation;
 import android.widget.ImageView;
 
 public class SplashActivity extends Activity {

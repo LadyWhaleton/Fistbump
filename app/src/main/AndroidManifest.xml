@@ -57,10 +57,8 @@
             <category android:name="android.intent.category.DEFAULT" />
         </intent-filter>
         <activity android:name=".WifiDirect" />
+
         <activity android:name=".setProfilePic" />
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value=".setUserName" />
 
         <activity android:name=".conversation">
             <intent-filter>

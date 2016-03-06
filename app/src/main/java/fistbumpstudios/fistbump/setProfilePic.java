@@ -65,6 +65,7 @@ public class setProfilePic extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             return;
         }
+
         writePicPath();
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);

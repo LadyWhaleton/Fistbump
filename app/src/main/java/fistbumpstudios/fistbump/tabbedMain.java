@@ -97,12 +97,14 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     }
 
     private boolean checkNewUser(){
-        String path = context.getFilesDir().getAbsolutePath()+"/"+ setUserName.userFilename;
-        File file = new File ( path );
-        if ( file.exists() )
-        {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String name = preferences.getString("UserName", null);
+        String pic = preferences.getString("profilePic", null);
+
+        if( (name != null) && (pic != null) ){
             return false;
         }
+
         return true;
     }
 
@@ -170,7 +172,6 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
                     return null;
 
             }
-
         }
 
         @Override
