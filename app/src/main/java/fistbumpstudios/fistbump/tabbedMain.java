@@ -28,7 +28,6 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 
 public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -48,9 +47,6 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabbed_main);
         context = getApplicationContext();
-
-
-
 
         //check if user already made a profile
         if(checkNewUser())
@@ -106,7 +102,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String name = preferences.getString("UserName", null);
         String pic = preferences.getString("profilePic", null);
-
+        Toast.makeText(this, name+pic, Toast.LENGTH_SHORT).show();
         if( (name != null) && (pic != null) ){
             return false;
         }
