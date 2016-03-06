@@ -1,6 +1,5 @@
 package fistbumpstudios.fistbump;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -58,8 +57,7 @@ public class conversation extends AppCompatActivity {
         }
 
         logFilename = buddyName + "_log.txt";
-        ActionBar ab = getActionBar();
-        ab.setTitle(buddyName);
+        setTitle(buddyName);
 
         //load messageLogs
         try {
