@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * A BroadcastReceiver that notifies of important Wi-Fi p2p events.
  */
@@ -66,7 +65,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             // InetAddress from WifiP2pInfo struct.
             InetAddress groupOwnerAddress = info.groupOwnerAddress;
-            activity.display_message("When is this called?\n");
+            //activity.display_message("When is this called?\n");
 
             // After the group negotiation, we can determine the group owner.
             if (info.groupFormed && info.isGroupOwner) {
@@ -177,6 +176,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             // Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
+            WifiP2pDevice device = (WifiP2pDevice) intent
+                    .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+
+            activity.p2p_mac_address = device.deviceAddress;
+            activity.display_message(device.deviceAddress + "\n");
+
+
 
             // Respond to this device's wifi state changing
         }

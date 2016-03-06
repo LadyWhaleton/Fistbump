@@ -55,6 +55,8 @@ public class acceptFriend extends AppCompatActivity {
 
         //open main activity after finishing writing your friend
         Intent intent = new Intent(this, tabbedMain.class);
+        intent.putExtra("connect", "yes");
+
         startActivity(intent);
         finish();
     }
