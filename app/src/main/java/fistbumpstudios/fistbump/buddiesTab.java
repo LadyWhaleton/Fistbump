@@ -165,9 +165,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             Intent intent = new Intent(getActivity() , conversation.class);
             intent.putExtra("name", buddyname);
             intent.putExtra("id", macAddr);
-
             startActivity(intent);
-
         }
         else if (item.getTitle() == "Edit") {
             Toast.makeText(getContext(), "Editing", Toast.LENGTH_SHORT).show();
