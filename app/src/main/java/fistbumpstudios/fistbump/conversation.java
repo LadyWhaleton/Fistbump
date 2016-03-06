@@ -9,15 +9,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
 public class conversation extends AppCompatActivity {
     String username, buddyName;
+    String logFilename;
+    String id;
     ListView convolistView;
     Context context;
     public static List<Message> messages;
@@ -32,8 +47,19 @@ public class conversation extends AppCompatActivity {
         convolistView = (ListView)findViewById(R.id.convList);
         context = getApplicationContext();
 
+        //to remove later
+        buddyName = "Stephanie";
+        id = "123123";
+        logFilename = buddyName + "_log.txt";
+
         //load messageLogs
-        readConvLog("blank.txt");
+        try {
+            readConvLog();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         //populate messages
         LiveUpdateConversaition();
@@ -44,18 +70,30 @@ public class conversation extends AppCompatActivity {
         convolistView.setAdapter(convAdapater);
     }
 
-    private void readConvLog(String filename){
-        filename = "";
-        addMsg();
+    private void readConvLog() throws IOException, JSONException {
+        messages.clear();
 
+        String message;
+        FileInputStream fis = this.openFileInput(logFilename);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(isr);
+        StringBuffer sb = new StringBuffer();
+
+        while ((message = br.readLine()) != null) {
+            JSONObject obj = new JSONObject(message);
+            jsonToMsg(obj);
+        }
+
+        LiveUpdateConversaition();
     }
 
-    private void addMsg(){
-        Message msg = new Message("Stephanie", "2123123", "hello ryota, you baka\n KONOYAROU!\n DOHENTAI", "2/30/16");
-        Message msg2 = new Message("ryotas4", "2123123", "hello stephanie!", "2/30/16");
+    private void jsonToMsg(JSONObject obj) throws JSONException {
+        addMsg(obj.getString("name"),obj.getString("body"), obj.getString("time"));
+    }
+
+    private void addMsg(String name, String body, String timestamp){
+        Message msg = new Message(name, "2123123", body, timestamp);
         messages.add(msg);
-        messages.add(msg2);
-        LiveUpdateConversaition();
     }
 
     private class convListAdapter extends ArrayAdapter<Message> {
@@ -95,4 +133,27 @@ public class conversation extends AppCompatActivity {
         }
     }
 
+    public void sendMessage(View view) throws IOException, JSONException {
+        EditText mEdit   = (EditText)findViewById(R.id.messageText);
+
+        DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+        String timeCreated = df.format(new Date());
+
+        JSONObject obj = new JSONObject();
+        obj.put("name", buddyName);
+        obj.put("id", "2213");
+        obj.put("body", mEdit.getText().toString());
+        obj.put("time", timeCreated);
+
+        FileOutputStream fos = openFileOutput(logFilename, Context.MODE_PRIVATE | MODE_APPEND);
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        out.append(obj.toString());
+        out.append(System.getProperty("line.separator"));
+        out.flush();
+        fos.close();
+
+        readConvLog();
+        mEdit.setText("");
+        mEdit.clearFocus();
+    }
 }

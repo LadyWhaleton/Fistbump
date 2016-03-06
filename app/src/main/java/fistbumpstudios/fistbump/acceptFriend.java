@@ -37,18 +37,15 @@ public class acceptFriend extends AppCompatActivity {
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             infoRaw = new String(message.getRecords()[0].getPayload());
             Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
-
         }
     }
-
-
-
 
     public void accept(View view) throws JSONException, IOException {
         String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
         obj.put("name", infoArray[0]);
         obj.put("MACAddress", infoArray[1]);
+
         //create new json object and save to filesystem
         FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
         OutputStreamWriter out = new OutputStreamWriter(fos);
