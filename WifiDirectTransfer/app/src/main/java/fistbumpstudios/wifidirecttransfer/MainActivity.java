@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                     bytesread = is.read(dst_byte_arr, 0, dst_size);
                     String destination = new String(dst_byte_arr, "UTF-8");
 
-                    if (option == 1) // message
+                    if (option == 1) // message to all
                     {
                         byte text_byte_arr[] = new byte [text_size];
                         bytesread = is.read(text_byte_arr, 0, text_size);
@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                         if (serverSocket != null) // if server, redistribute
                             send_message(name, text, clientSocket);
                     }
-                    else if (option == 2) // file
+                    else if (option == 2) // file to all
                     {
                         byte file_buffer[] = new byte[1024];
 

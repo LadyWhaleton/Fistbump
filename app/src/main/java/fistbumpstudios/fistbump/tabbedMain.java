@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
@@ -27,9 +28,11 @@ import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 
 public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private Thread peer_discovery_thread = null;
     NfcAdapter nfc;
     Context context;
 
@@ -210,5 +213,38 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         NdefRecord ndefRecord = NdefRecord.createMime("text/plain", message.getBytes());
         NdefMessage ndefMessage = new NdefMessage(ndefRecord);
         return ndefMessage;
+    }
+
+    class peer_discovery_thread implements Runnable {
+
+        public void run() {
+            while (true){
+                try {
+                    SharedData.mManager.discoverPeers(SharedData.mChannel, new WifiP2pManager.ActionListener() {
+                        @Override
+                        public void onSuccess() {
+                            Context context = getApplicationContext();
+                            Toast.makeText(context, "Finding people to connect to!", Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        @Override
+                        public void onFailure(int reasonCode) {
+
+                        }
+                    });
+                    Thread.sleep(5000);
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public static class SharedData
+    {
+        public static WifiP2pManager mManager;
+        public static WifiP2pManager.Channel mChannel;
     }
 }
