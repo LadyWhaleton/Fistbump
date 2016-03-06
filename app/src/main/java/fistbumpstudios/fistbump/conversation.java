@@ -1,6 +1,7 @@
 package fistbumpstudios.fistbump;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,6 +38,7 @@ public class conversation extends AppCompatActivity {
     Context context;
     public static List<Message> messages;
 
+    int RESULTCODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +46,7 @@ public class conversation extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         username = preferences.getString("UserName", null);
         messages = new ArrayList<>();
-        convolistView = (ListView)findViewById(R.id.convList);
+        convolistView = (ListView) findViewById(R.id.convList);
         context = getApplicationContext();
 
         //to remove later
@@ -65,7 +67,7 @@ public class conversation extends AppCompatActivity {
         LiveUpdateConversaition();
     }
 
-    public void LiveUpdateConversaition(){
+    public void LiveUpdateConversaition() {
         ArrayAdapter<Message> convAdapater = new convListAdapter(context);
         convolistView.setAdapter(convAdapater);
     }
@@ -88,10 +90,10 @@ public class conversation extends AppCompatActivity {
     }
 
     private void jsonToMsg(JSONObject obj) throws JSONException {
-        addMsg(obj.getString("name"),obj.getString("body"), obj.getString("time"));
+        addMsg(obj.getString("name"), obj.getString("body"), obj.getString("time"));
     }
 
-    private void addMsg(String name, String body, String timestamp){
+    private void addMsg(String name, String body, String timestamp) {
         Message msg = new Message(name, "2123123", body, timestamp);
         messages.add(msg);
     }
@@ -112,11 +114,9 @@ public class conversation extends AppCompatActivity {
 
 
             Message currentMsg = messages.get(position);
-            if(currentMsg.getSenderName().equals(username)){
+            if (currentMsg.getSenderName().equals(username)) {
                 view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
-            }
-
-            else {
+            } else {
                 view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
             }
 
@@ -134,7 +134,7 @@ public class conversation extends AppCompatActivity {
     }
 
     public void sendMessage(View view) throws IOException, JSONException {
-        EditText mEdit   = (EditText)findViewById(R.id.messageText);
+        EditText mEdit = (EditText) findViewById(R.id.messageText);
 
         DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
         String timeCreated = df.format(new Date());
@@ -156,4 +156,22 @@ public class conversation extends AppCompatActivity {
         mEdit.setText("");
         mEdit.clearFocus();
     }
+
+    public void attachFile(View view) {
+
+
+    }
+
+    public void selectFile(View view){
+        Intent chooseFile;
+        Intent intent;
+        chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+        chooseFile.setType("file/*");
+        intent = Intent.createChooser(chooseFile, "Choose a file");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, RESULTCODE);
+
+
+    }
+
 }

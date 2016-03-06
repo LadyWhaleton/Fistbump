@@ -76,9 +76,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            if(checkForNFC())
+            if(checkForNFC()){
                 nfc.setNdefPushMessageCallback(tabbedMain.this, tabbedMain.this);
-            }
+                Toast.makeText(context, "tap another phone!" , Toast.LENGTH_SHORT).show();
+            }}
         });
     }
 
