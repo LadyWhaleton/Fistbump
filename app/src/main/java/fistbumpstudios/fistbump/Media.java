@@ -26,6 +26,7 @@ public class Media {
     private String timeReceived;
     private String mediaType;
     private String mimeType;
+    private String fileExtension;
 
     // info about the media's original sender
     private String ownerName;
@@ -62,12 +63,23 @@ public class Media {
     private void setMediaType()
     {
         String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1,  fileName.length());
+
         String fileMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension);
 
-        String[] parsedMimeType = fileMimeType.split("/");
+        // Handles cases where there's no file extension
+        if (fileMimeType != null)
+        {
+            String[] parsedMimeType = fileMimeType.split("/");
+            this.mediaType = parsedMimeType[0];
+            this.mimeType = fileMimeType;
+            this.fileExtension = fileExtension;
+        }
 
-        this.mediaType = parsedMimeType[0];
-        this.mimeType = fileMimeType;
+        else {
+            this.mediaType = "?";
+            this.mimeType = "?";
+            this.fileExtension = "?";
+        }
     }
 
     public String getOwnerName()
@@ -93,6 +105,11 @@ public class Media {
     public String getMimeType()
     {
         return this.mimeType;
+    }
+
+    public String getFileExt()
+    {
+        return this.fileExtension;
     }
 
     public String getMediaPath()

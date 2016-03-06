@@ -167,7 +167,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
                 case 0:
                     return new buddiesTab();
                 case 1:
-                    return new messagesTab();
+                    return new buddiesTab();
                 case 2:
                     return new MediaGalleryTab();
                 default:
