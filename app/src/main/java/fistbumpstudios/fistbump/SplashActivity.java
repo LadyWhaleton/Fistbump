@@ -23,7 +23,7 @@ public class SplashActivity extends Activity {
         // Start the animation (looped playback by default).
         frameAnimation.start();
 
-        
+
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
