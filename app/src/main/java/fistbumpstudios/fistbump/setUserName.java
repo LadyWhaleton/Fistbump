@@ -37,6 +37,7 @@ public class setUserName extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("UserName", username);
+        tabbedMain.userName = username;
         editor.putString("MAC", getMAC());
         editor.apply();
 

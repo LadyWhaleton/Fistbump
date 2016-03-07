@@ -108,7 +108,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     }
 
     // Implementation question: Should we update the database right after adding?
-    private void addBuddy(String name, String id, Uri pic) {
+    public void addBuddy(String name, String id, Uri pic) {
         Buddies.add(new Buddy(name, id, pic));
         LiveUpdateBuddies();
     }
@@ -175,13 +175,15 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals("Connect")) {
-            Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
+
             //Intent intent = new Intent(getActivity() , conversation.class);
             //intent.putExtra("name", buddyname);
             //intent.putExtra("id", macAddr);
             //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             //startActivity(intent);
             if (!WiFiDirectBroadcastReceiver.connected_devices.contains(macAddr)) {
+                //Toast.makeText(getContext(), "Connect!", Toast.LENGTH_SHORT).show();
+                WifiDirect.friend_mac_addr = new String(macAddr);
                 WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = macAddr;
                 config.wps.setup = WpsInfo.PBC;

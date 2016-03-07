@@ -131,7 +131,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 for (int i = 0; i < peers.size(); ++i)
                 {
                     final WifiP2pDevice device = peers.get(i);
-                    //TODO: update friend
 
                     for (Buddy buddy : buddiesTab.Buddies) {
                         if (buddy.getID().equals(device.deviceAddress))
@@ -139,10 +138,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                             buddy.changeOnlineStatus(true);
                         }
                     }
-                    /*
-                        if (connect_flag)
-                            break;
-                    }*/
                 }
                 tabbedMain.buddiesTabFragment.buddyAdapter.notifyDataSetChanged();
                 tabbedMain.buddiesTabFragment.buddylistView.invalidateViews();

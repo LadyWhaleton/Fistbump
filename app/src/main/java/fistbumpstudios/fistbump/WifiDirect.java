@@ -3,14 +3,20 @@ package fistbumpstudios.fistbump;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.FileOutputStream;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -19,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -43,6 +50,7 @@ public class WifiDirect {
     public static final int SERVERPORT = 8080;
     public static InetAddress serverAddr = null;
     public static String p2p_mac_address = null;
+    public static String friend_mac_addr = null;
 
 
     private static byte[] int_To_Byte_Array(int value) {
@@ -108,6 +116,11 @@ public class WifiDirect {
                         display_message(mac_to_socket_map.toString() + "\n");
 
                         clientSockets.add(socket);
+                        if (friend_mac_addr != null) {
+                            send_friend_request(tabbedMain.userName, friend_mac_addr, null);
+                            friend_mac_addr = null;
+                        }
+                        send_profile_pic(null);
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
                     }
@@ -131,6 +144,11 @@ public class WifiDirect {
                         //DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
                         clientSocket.getOutputStream().write(p2p_mac_address.getBytes(), 0, 17);
                         clientSockets.add(clientSocket);
+                        if (friend_mac_addr != null) {
+                            send_friend_request(tabbedMain.userName, friend_mac_addr, null);
+                            friend_mac_addr = null;
+                        }
+                        send_profile_pic(null);
                         CommunicationThread commThread = new CommunicationThread(clientSocket);
                         new Thread(commThread).start();
                         break;
@@ -180,9 +198,6 @@ public class WifiDirect {
                 int bytesread;
                 while(!Thread.currentThread().isInterrupted()) {
 
-                    //ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                    String what = ""; // this string is used for debugging purposes
-
                     // int option is the type of message
                     // 1 means message to be distributed
                     // 2 means file to be distributed
@@ -190,30 +205,18 @@ public class WifiDirect {
                     // 4 means send friend picture
                     bytesread = is.read(buffer, 0, 4);
                     int option = buffer_to_int(buffer);
-                    for (int i = 0; i < bytesread; ++i)
-                        what += buffer[i] + ".";
-                    what += " ";
 
                     // int name_size is the size in bytes of the name portion
                     bytesread = is.read(buffer, 0, 4);
                     int name_size = buffer_to_int(buffer);
-                    for (int i = 0; i < bytesread; ++i)
-                        what += buffer[i] + ".";
-                    what += " ";
 
                     // int dst_size is the size in bytes of the destination portion
                     bytesread = is.read(buffer, 0, 4);
                     int dst_size = buffer_to_int(buffer);
-                    for (int i = 0; i < bytesread; ++i)
-                        what += buffer[i] + ".";
-                    what += "\n";
 
                     // int text_size is the size in bytes of the text portion
                     bytesread = is.read(buffer, 0, 4);
                     int text_size = buffer_to_int(buffer);
-                    for (int i = 0; i < bytesread; ++i)
-                        what += buffer[i] + ".";
-                    what += "\n";
 
                     // String name is the name of length name_size
                     byte name_byte_arr[] = new byte [name_size];
@@ -221,9 +224,9 @@ public class WifiDirect {
                     String name = new String(name_byte_arr, "UTF-8");
 
                     // String destination is the mac of who the message goes to
-                    byte dst_byte_arr[] = new byte [dst_size];
-                    bytesread = is.read(dst_byte_arr, 0, dst_size);
-                    String destination = new String(dst_byte_arr, "UTF-8");
+                    byte aux_byte_arr[] = new byte [dst_size];
+                    bytesread = is.read(aux_byte_arr, 0, dst_size);
+                    String auxillary = new String(aux_byte_arr, "UTF-8");
 
                     if (option == 1) // message to all
                     {
@@ -255,19 +258,74 @@ public class WifiDirect {
                         if (serverSocket != null) // redistribute file if server
                             send_file(file.getPath(), file.getName(), clientSocket);
                     }
-                    else if (option == 3)
+                    else if (option == 3) // directed friend request
                     {
-                        // TODO: send friend request
-                        // name is our name
-                        // dest is friend's mac address
-                        // text is our mac address
+                        // name is their name
+                        // aux is our mac address
+                        // text is their mac address
+                        byte text_byte_arr[] = new byte [text_size];
+                        bytesread = is.read(text_byte_arr, 0, text_size);
+
+                        String text = new String(text_byte_arr, "UTF-8");
+
+                        if (auxillary.equals(p2p_mac_address)) {
+                            display_message("Received Friend Request " + name + " " + text);
+                            boolean is_friend = false;
+                            for (Buddy buddy : buddiesTab.Buddies)
+                            {
+                                if (buddy.getID().equals(text))
+                                {
+                                    is_friend = true;
+                                    break;
+                                }
+                            }
+                            if (!is_friend)
+                            {
+                                try {
+                                    tabbedMain.add_friend(name, text);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                // add friend
+                            }
+                        }
+                        else
+                        {
+                            if (serverSocket != null)
+                            {
+                                send_friend_request(name, text, clientSocket);
+                            }
+                                display_message("Redistribute Friend Request" + name + " " + auxillary + " " + text);
+                        }
+
                     }
                     else if (option == 4)
                     {
-                        // TODO: send friend picture
-                        // name is our name
-                        // dest is friend's mac address
+                        // TODO: receive friend picture
+                        // name is picture name
+                        // aux is friend mac
                         // text is the picture file to be sent
+
+                        byte file_buffer[] = new byte[1024];
+
+                        File directory = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics");
+                        directory.mkdir();
+
+                        File file = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics/", auxillary + ";" + name);
+
+                        FileOutputStream fileOutputStream = new FileOutputStream(file);
+                        int bytes_read_so_far = 0;
+                        int bytes_read_this_loop = 0;
+                        while (bytes_read_so_far < text_size) {
+                            bytes_read_this_loop = is.read(file_buffer, 0, Math.min(text_size - bytes_read_so_far, 1024));
+                            bytes_read_so_far += bytes_read_this_loop;
+                            fileOutputStream.write(file_buffer, 0, bytes_read_this_loop);
+                        }
+                        display_message(text_size + "\n");
+
+                        display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
+                        if (serverSocket != null) // redistribute file if server
+                            send_file(file.getPath(), file.getName(), clientSocket);
                     }
                     else // error, we just kill the current thread and try again with a new one.
                     {
@@ -283,7 +341,6 @@ public class WifiDirect {
                     //for (int i = 0; i < bytesread; ++i)
                     //  what += (char)buffer[i];
 
-                    display_message(what + "\n");
 
                 }
             } catch (IOException e) {
@@ -449,7 +506,7 @@ public class WifiDirect {
     // to_exclude is the socket to be ignored on send, used by server
     static public void send_friend_request(String name, String friend_mac_address, Socket to_exclude)
     {
-        int option = 1;
+        int option = 3;
         int name_length = name.length();
         int dst_length = friend_mac_address.length();
         String our_mac_address = p2p_mac_address;
@@ -494,4 +551,80 @@ public class WifiDirect {
         }
         to_remove.clear();
     }
+
+    static public void send_profile_pic(Socket to_exclude)
+    {
+        if (!clientSockets.isEmpty()) {
+            int option = 4;
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabbedMain.context);
+            String picturePath = preferences.getString("profilePic", null);
+            String[] split_path = picturePath.split("/");
+
+            String name = split_path[split_path.length - 1];
+            int name_length = name.length();
+            String auxillary = p2p_mac_address;
+            int aux_length = auxillary.length();
+            File file = new File(picturePath);
+            // Get the size of the file
+            int file_length = (int) file.length();
+            if (file_length == 0) {
+                display_message("woops, no file\n");
+                return;
+            }
+            display_message(String.valueOf(file_length) + "\n");
+            byte bytes[] = new byte[1024];
+
+
+            //for (int i = 0; i < 12; ++i)
+            //display_message(String.valueOf(bytes[i]));
+
+            //display_message(name + text);
+            Collection<Socket> to_remove = new ArrayList<Socket>();
+
+            for (Socket clientSocket : clientSockets) {
+                try {
+                    if (to_exclude != null)
+                        if (to_exclude.equals(clientSocket))
+                            continue;
+                    if (!clientSocket.isConnected())
+                    {
+                        to_remove.add(clientSocket);
+                        continue;
+                    }
+
+                    OutputStream outputStream = clientSocket.getOutputStream();
+                    copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+                    copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+                    copy_Byte_Array(bytes, int_To_Byte_Array(aux_length), 8, 4); //auxillary
+                    copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 12, 4);
+                    outputStream.write(bytes, 0, 16);
+                    outputStream.write(name.getBytes());
+                    outputStream.write(auxillary.getBytes());
+
+                    InputStream in = new FileInputStream(file);
+
+                    int count;
+                    int bytes_sent = 0;
+                    while ((count = in.read(bytes)) > 0) {
+                        outputStream.write(bytes, 0, count);
+                        bytes_sent += count;
+                    }
+                    display_message(String.valueOf(bytes_sent) + "\n");
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    to_remove.add(clientSocket);
+                }
+            }
+            for (Socket remove_socket : to_remove)
+            {
+                clientSockets.remove(remove_socket);
+            }
+            to_remove.clear();
+        }
+    }
+
+
+
 }
