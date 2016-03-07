@@ -2,12 +2,16 @@ package fistbumpstudios.fistbump;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -24,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -151,9 +156,24 @@ public class buddiesTab extends android.support.v4.app.Fragment {
                 status.setText("Online");
             else
                 status.setText("Offline");
-            ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
-            Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
-            pic.setImageDrawable(myDrawable);
+
+            File imgFile = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics/" + currentBuddy.getID() + ".jpg");
+            if (!imgFile.exists())
+                imgFile = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics/" + currentBuddy.getID() + ".png");
+
+            if(imgFile.exists()){
+
+                Bitmap myBitmap = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(imgFile.getAbsolutePath()), 256, 256);
+
+                ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
+
+                pic.setImageBitmap(myBitmap);
+
+            }
+
+            //Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
+
+            //pic.setImageDrawable(myDrawable);
             return view;
         }
     }

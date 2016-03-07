@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -283,6 +284,7 @@ public class WifiDirect {
                             {
                                 try {
                                     tabbedMain.add_friend(name, text);
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -311,7 +313,7 @@ public class WifiDirect {
                         File directory = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics");
                         directory.mkdir();
 
-                        File file = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics/", auxillary + ";" + name);
+                        File file = new File(Environment.getExternalStorageDirectory() + "/FistBump/ProfilePics/", name);
 
                         FileOutputStream fileOutputStream = new FileOutputStream(file);
                         int bytes_read_so_far = 0;
@@ -324,6 +326,12 @@ public class WifiDirect {
                         display_message(text_size + "\n");
 
                         display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
+
+                        for (Buddy buddy : buddiesTab.Buddies)
+                        {
+                            if (buddy.getID().equals(auxillary))
+                                buddy.changeProfilePic(Uri.fromFile(file));
+                        }
                         if (serverSocket != null) // redistribute file if server
                             send_file(file.getPath(), file.getName(), clientSocket);
                     }
@@ -558,9 +566,9 @@ public class WifiDirect {
             int option = 4;
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabbedMain.context);
             String picturePath = preferences.getString("profilePic", null);
-            String[] split_path = picturePath.split("/");
 
-            String name = split_path[split_path.length - 1];
+            String name = p2p_mac_address + picturePath.substring(picturePath.length() - 4);
+            WifiDirect.display_message(name);
             int name_length = name.length();
             String auxillary = p2p_mac_address;
             int aux_length = auxillary.length();

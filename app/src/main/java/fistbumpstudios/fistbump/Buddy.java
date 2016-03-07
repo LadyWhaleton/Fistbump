@@ -37,6 +37,7 @@ public class Buddy {
         this.name = newName;
     }
     public void changeStatusMessage (String newStatusMessage) { this.statusMessage = newStatusMessage; }
+    public void changeProfilePic(Uri newProfilePic) { this.profilePic = newProfilePic; }
     public void changeOnlineStatus(boolean newOnlineStatus) { this.onlineStatus = newOnlineStatus; }
 
 }
