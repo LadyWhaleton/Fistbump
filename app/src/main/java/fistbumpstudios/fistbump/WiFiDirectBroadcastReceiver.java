@@ -12,6 +12,7 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
+import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -127,6 +128,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
                 {
                     final WifiP2pDevice device = peers.get(i);
                     //TODO: update friend
+                    for (Buddy buddy : buddiesTab.Buddies) {
+                        if (buddy.getID().equals(device.deviceAddress))
+                        {
+                            buddy.changeOnlineStatus(true);
+                            Toast.makeText(context, "Found " + buddy.getName(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     /*if (!connected_devices.contains(device.deviceAddress)) {
                         WifiP2pConfig config = new WifiP2pConfig();
                         config.deviceAddress = device.deviceAddress;
