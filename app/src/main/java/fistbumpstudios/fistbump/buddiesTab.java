@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.net.wifi.WpsInfo;
+import android.net.wifi.p2p.WifiP2pConfig;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -33,6 +36,8 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     TextView emptyListView;
 
     String buddyname, macAddr;
+    public ArrayAdapter<Buddy> buddyAdapter;
+
     public buddiesTab() {
     }
 
@@ -101,15 +106,19 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     }
 
     // Implementation question: Should we update the database right after adding?
-    private void addBuddy(String name, String id, Uri pic) {
+    public void addBuddy(String name, String id, Uri pic) {
         Buddies.add(new Buddy(name, id, pic));
         LiveUpdateBuddies();
     }
 
     // update buddies (while in App)
-    private void LiveUpdateBuddies() {
-        ArrayAdapter<Buddy> buddyAdapter = new BuddyListAdapter(getActivity());
+    public void LiveUpdateBuddies() {
+        buddyAdapter = new BuddyListAdapter(getActivity());
         buddylistView.setAdapter(buddyAdapter);
+    }
+
+    public void reloadBuddies() {
+
     }
 
     private class BuddyListAdapter extends ArrayAdapter<Buddy> {
@@ -137,6 +146,11 @@ public class buddiesTab extends android.support.v4.app.Fragment {
             // do the same for the other fields
             TextView macAddr = (TextView) view.findViewById(R.id.MacAddress);
             macAddr.setText(currentBuddy.getID());
+            TextView status = (TextView) view.findViewById(R.id.Status);
+            if (currentBuddy.isOnline())
+                status.setText("Online");
+            else
+                status.setText("Offline");
             ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
             Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
             pic.setImageDrawable(myDrawable);
@@ -150,7 +164,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId() == R.id.buddylistView) {
             menu.setHeaderTitle("Select an Action");
-            menu.add(0, v.getId(), 0, "Send a Message");
+            menu.add(0, v.getId(), 0, "Connect");
             menu.add(0, v.getId(), 0, "Edit");
             menu.add(0, v.getId(), 0, "Delete");
         }
@@ -158,18 +172,43 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (item.getTitle() == "Send a Message") {
-            Toast.makeText(getContext(), "Message send", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity() , conversation.class);
-            intent.putExtra("name", buddyname);
-            intent.putExtra("id", macAddr);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            startActivity(intent);
+        if (item.getTitle().equals("Connect")) {
+
+            //Intent intent = new Intent(getActivity() , conversation.class);
+            //intent.putExtra("name", buddyname);
+            //intent.putExtra("id", macAddr);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            //startActivity(intent);
+            if (!WiFiDirectBroadcastReceiver.connected_devices.contains(macAddr)) {
+                //Toast.makeText(getContext(), "Connect!", Toast.LENGTH_SHORT).show();
+                WifiDirect.friend_mac_addr = new String(macAddr);
+                WifiP2pConfig config = new WifiP2pConfig();
+                config.deviceAddress = macAddr;
+                config.wps.setup = WpsInfo.PBC;
+                WifiDirect.mManager.connect(WifiDirect.mChannel, config, new WifiP2pManager.ActionListener() {
+                    @Override
+                    public void onSuccess() {
+                        //success logic
+                        String msg = "I have connected with ";
+                        msg += buddyname;
+                        msg += " with MAC: ";
+                        msg += macAddr;
+                        msg += "\n";
+                        WifiDirect.display_message(msg);
+                    }
+
+                    @Override
+                    public void onFailure(int reason) {
+                        //failure logic
+                        //activity.display_message("I have failed to connected!\n");
+                    }
+                });
+            }
         }
-        else if (item.getTitle() == "Edit") {
+        else if (item.getTitle().equals("Edit")) {
             Toast.makeText(getContext(), "Editing", Toast.LENGTH_SHORT).show();
         }
-        else if (item.getTitle() == "Delete") {
+        else if (item.getTitle().equals("Delete")) {
             Toast.makeText(getContext(), "Delete", Toast.LENGTH_SHORT).show();
         }
         else {

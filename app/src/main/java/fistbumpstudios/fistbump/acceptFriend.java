@@ -13,6 +13,7 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -38,6 +39,19 @@ public class acceptFriend extends AppCompatActivity {
             infoRaw = new String(message.getRecords()[0].getPayload());
             Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
         }
+    }
+
+    public  void add_friend(String name, String mac) throws JSONException, IOException {
+        JSONObject obj = new JSONObject();
+        obj.put("name", name);
+        obj.put("MACAddress", mac);
+        //create new json object and save to filesystem
+        FileOutputStream fos = openFileOutput(friendFile, Context.MODE_PRIVATE | MODE_APPEND);
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        out.append(obj.toString());
+        out.append(System.getProperty("line.separator"));
+        out.flush();
+
     }
 
     public void accept(View view) throws JSONException, IOException {

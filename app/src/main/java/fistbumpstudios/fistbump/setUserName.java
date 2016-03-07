@@ -29,6 +29,7 @@ public class setUserName extends AppCompatActivity {
     }
 
     public String getMAC(){
+        WifiDirect.display_message(WifiDirect.p2p_mac_address + "\n");
         return WifiDirect.p2p_mac_address;
     }
 
@@ -36,6 +37,7 @@ public class setUserName extends AppCompatActivity {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("UserName", username);
+        tabbedMain.userName = username;
         editor.putString("MAC", getMAC());
         editor.apply();
 

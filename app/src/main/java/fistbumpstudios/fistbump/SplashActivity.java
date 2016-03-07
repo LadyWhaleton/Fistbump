@@ -38,12 +38,7 @@ public class SplashActivity extends Activity {
         frameAnimation.start();
     }
 
-    @Override
-    protected void onPause() {
-        // TODO Auto-generated method stub
-        super.onPause();
-        finish();
-    }
+
 
 }
 

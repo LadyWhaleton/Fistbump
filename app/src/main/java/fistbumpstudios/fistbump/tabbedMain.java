@@ -27,16 +27,25 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Thread peer_discovery_thread = null;
     private Object peer_discover_lock;
     private boolean peer_discover_flag;
+    public static String userName;
     NfcAdapter nfc;
-    Context context;
+    static Context context;
+
+    public static buddiesTab buddiesTabFragment;
 
     private int[] tabIcons = {
             R.drawable.ic_contacts_pink_24dp,
@@ -59,6 +68,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             startActivity(intent);
             finish();
         }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        userName = preferences.getString("UserName", null);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -185,9 +197,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             switch(position)
             {
                 case 0:
-                    return new buddiesTab();
+                    buddiesTabFragment = new buddiesTab();
+                    return buddiesTabFragment;
                 case 1:
-                    return new buddiesTab();
+                    return new messagesTab();
                 case 2:
                     return new MediaGalleryTab();
                 default:
@@ -254,6 +267,25 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         unregisterReceiver(WifiDirect.mReceiver);
     }
 
+    public static void add_friend(String name, String mac) throws JSONException, IOException {
+        JSONObject obj = new JSONObject();
+        obj.put("name", name);
+        obj.put("MACAddress", mac);
+
+        //create new json object and save to filesystem
+        FileOutputStream fos = context.openFileOutput(acceptFriend.friendFile, MODE_PRIVATE | MODE_APPEND);
+        OutputStreamWriter out = new OutputStreamWriter(fos);
+        out.append(obj.toString());
+        out.append(System.getProperty("line.separator"));
+        out.flush();
+        buddiesTab.Buddies.add(new Buddy(name, mac, null));
+
+        //buddiesTabFragment.addBuddy(name, mac, null);
+        //buddiesTabFragment.buddyAdapter.notifyDataSetChanged();
+        //buddiesTabFragment.buddylistView.invalidateViews();
+
+    }
+
     class Peer_discovery_thread implements Runnable {
 
         public void run() {
@@ -263,15 +295,13 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
                     WifiDirect.mManager.discoverPeers(WifiDirect.mChannel, new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
-                            Context context = getApplicationContext();
-                            Toast.makeText(context, "Finding people to connect to!", Toast.LENGTH_SHORT).show();
+                            //WifiDirect.display_message("Finding people to connect to!");
 
                         }
 
                         @Override
                         public void onFailure(int reasonCode) {
-                            Context context = getApplicationContext();
-                            Toast.makeText(context, "Woopsydasicals!", Toast.LENGTH_SHORT).show();
+                            //WifiDirect.display_message("Woopsydasicals!");
                         }
                     });
                     Thread.sleep(10000);
