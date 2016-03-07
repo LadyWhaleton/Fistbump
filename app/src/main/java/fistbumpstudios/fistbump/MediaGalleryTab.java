@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +31,8 @@ public class MediaGalleryTab extends Fragment {
 
     GridView galleryGridView;
     TextView emptyGridView;
+    SwipeRefreshLayout swipeLayout;
+    ArrayAdapter<Media> galleryAdapter;
 
     private String folderName = Environment.getExternalStorageDirectory().toString() + "/Fistbump";
     public static List<Media> mediaList;
@@ -88,9 +89,31 @@ public class MediaGalleryTab extends Fragment {
         emptyGridView = (TextView) getView().findViewById(R.id.emptyGalleryTextView);
         galleryGridView.setEmptyView(emptyGridView);
         LoadMedia();
+        setSwipeRefresh();
+        // Update the Media Gallery
+        LiveUpdateMedia();
 
         // TODO: replace load media with LiveUpdate. Move LoadMedia to tabbedMain
         setListClickListener();
+
+    }
+
+    private void setSwipeRefresh(){
+        swipeLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipeContainer);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        LoadMedia();
+                        galleryAdapter.notifyDataSetChanged();
+                        swipeLayout.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+        });
 
     }
 
@@ -106,15 +129,12 @@ public class MediaGalleryTab extends Fragment {
                     Uri uri = mediaList.get(position).getUriFromFileName();
                     intent.setDataAndType(uri, mediaList.get(position).getMimeType());
                     startActivity(intent);
-                }
-
-                else {
+                } else {
                     Toast.makeText(getContext(), "You cannot view this file.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -159,15 +179,14 @@ public class MediaGalleryTab extends Fragment {
         // TODO: Implement LoadMedia
         // Get MediaList log file
 
-
+        mediaList = new ArrayList<>();
         File FistbumpDir = new File(folderName);
         File[] FistbumpMediaFiles = FistbumpDir.listFiles();
 
-        /** Toast.makeText(getContext(), String.valueOf(FistbumpMediaFiles.length), Toast.LENGTH_SHORT).show();
 
-        for (File f : FistbumpMediaFiles)
-            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
-         */
+//        for (File f : FistbumpMediaFiles)
+//            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
+//         */
 
         // For each file, create a Media object
         for (File f: FistbumpMediaFiles)
@@ -177,8 +196,6 @@ public class MediaGalleryTab extends Fragment {
             mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
         }
 
-        // Update the Media Gallery
-        LiveUpdateMedia();
 
 
     }
@@ -189,7 +206,8 @@ public class MediaGalleryTab extends Fragment {
     private void LiveUpdateMedia()
     {
         // TODO: Implement LiveUpdateMedia
-        galleryGridView.setAdapter(new MediaGalleryAdapter(getActivity()));
+         galleryAdapter = new MediaGalleryAdapter(getActivity());
+        galleryGridView.setAdapter(galleryAdapter);
         // galleryGridView.setAdapter(new ImageAdapter());
     }
 
@@ -243,5 +261,6 @@ public class MediaGalleryTab extends Fragment {
         }
 
     }
+
 
 }

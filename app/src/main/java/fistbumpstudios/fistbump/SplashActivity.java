@@ -14,18 +14,16 @@ public class SplashActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_screen);
+        ImageView img = (ImageView)findViewById(R.id.splash_iv);
+        img.setBackgroundResource(R.drawable.anim);
 
-        splash_iv = (ImageView) findViewById(R.id.splash_iv);
+        // Get the background, which has been compiled to an AnimationDrawable object.
+        AnimationDrawable frameAnimation = (AnimationDrawable) img.getBackground();
 
-        AnimationDrawable animation = (AnimationDrawable) splash_iv.getBackground();
-        animation.start();
+        // Start the animation (looped playback by default).
+        frameAnimation.start();
 
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        
         Intent intent = new Intent(this, tabbedMain.class);
         startActivity(intent);
         finish();
