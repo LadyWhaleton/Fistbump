@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,7 @@ public class MediaGalleryTab extends Fragment {
 
     GridView galleryGridView;
     TextView emptyGridView;
+    SwipeRefreshLayout swipeLayout;
 
     private String folderName = Environment.getExternalStorageDirectory().toString() + "/Fistbump";
     public static List<Media> mediaList;
@@ -87,9 +90,31 @@ public class MediaGalleryTab extends Fragment {
         emptyGridView = (TextView) getView().findViewById(R.id.emptyGalleryTextView);
         galleryGridView.setEmptyView(emptyGridView);
         LoadMedia();
+        setSwipeRefresh();
 
         // TODO: replace load media with LiveUpdate. Move LoadMedia to tabbedMain
         setListClickListener();
+
+    }
+
+    private void setSwipeRefresh(){
+        swipeLayout = (SwipeRefreshLayout) getView().findViewById(R.id.swipeContainer);
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeLayout.setRefreshing(false);
+                        LoadMedia();
+                        if(swipeLayout.isRefreshing())
+                            swipeLayout.setRefreshing(false);
+                        
+                    }
+                }, 1000);
+            }
+        });
 
     }
 
@@ -105,15 +130,12 @@ public class MediaGalleryTab extends Fragment {
                     Uri uri = mediaList.get(position).getUriFromFileName();
                     intent.setDataAndType(uri, mediaList.get(position).getMimeType());
                     startActivity(intent);
-                }
-
-                else {
+                } else {
                     Toast.makeText(getContext(), "You cannot view this file.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -162,11 +184,11 @@ public class MediaGalleryTab extends Fragment {
         File FistbumpDir = new File(folderName);
         File[] FistbumpMediaFiles = FistbumpDir.listFiles();
 
-        /** Toast.makeText(getContext(), String.valueOf(FistbumpMediaFiles.length), Toast.LENGTH_SHORT).show();
+         Toast.makeText(getContext(), String.valueOf(FistbumpMediaFiles.length), Toast.LENGTH_SHORT).show();
 
-        for (File f : FistbumpMediaFiles)
-            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
-         */
+//        for (File f : FistbumpMediaFiles)
+//            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
+//         */
 
         // For each file, create a Media object
         for (File f: FistbumpMediaFiles)
@@ -243,5 +265,6 @@ public class MediaGalleryTab extends Fragment {
         }
 
     }
+
 
 }
