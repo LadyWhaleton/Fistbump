@@ -20,9 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +32,7 @@ public class MediaGalleryTab extends Fragment {
     GridView galleryGridView;
     TextView emptyGridView;
     SwipeRefreshLayout swipeLayout;
+    ArrayAdapter<Media> galleryAdapter;
 
     private String folderName = Environment.getExternalStorageDirectory().toString() + "/Fistbump";
     public static List<Media> mediaList;
@@ -92,6 +90,8 @@ public class MediaGalleryTab extends Fragment {
         galleryGridView.setEmptyView(emptyGridView);
         LoadMedia();
         setSwipeRefresh();
+        // Update the Media Gallery
+        LiveUpdateMedia();
 
         // TODO: replace load media with LiveUpdate. Move LoadMedia to tabbedMain
         setListClickListener();
@@ -107,11 +107,9 @@ public class MediaGalleryTab extends Fragment {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        swipeLayout.setRefreshing(false);
                         LoadMedia();
-                        if(swipeLayout.isRefreshing())
-                            swipeLayout.setRefreshing(false);
-                        
+                        galleryAdapter.notifyDataSetChanged();
+                        swipeLayout.setRefreshing(false);
                     }
                 }, 1000);
             }
@@ -181,11 +179,10 @@ public class MediaGalleryTab extends Fragment {
         // TODO: Implement LoadMedia
         // Get MediaList log file
 
-
+        mediaList = new ArrayList<>();
         File FistbumpDir = new File(folderName);
         File[] FistbumpMediaFiles = FistbumpDir.listFiles();
 
-         Toast.makeText(getContext(), String.valueOf(FistbumpMediaFiles.length), Toast.LENGTH_SHORT).show();
 
 //        for (File f : FistbumpMediaFiles)
 //            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
@@ -199,8 +196,6 @@ public class MediaGalleryTab extends Fragment {
             mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
         }
 
-        // Update the Media Gallery
-        LiveUpdateMedia();
 
 
     }
@@ -211,7 +206,8 @@ public class MediaGalleryTab extends Fragment {
     private void LiveUpdateMedia()
     {
         // TODO: Implement LiveUpdateMedia
-        galleryGridView.setAdapter(new MediaGalleryAdapter(getActivity()));
+         galleryAdapter = new MediaGalleryAdapter(getActivity());
+        galleryGridView.setAdapter(galleryAdapter);
         // galleryGridView.setAdapter(new ImageAdapter());
     }
 
