@@ -43,8 +43,6 @@ public class buddiesTab extends android.support.v4.app.Fragment {
 
     public static buddiesTab newInstance() {
         buddiesTab fragment = new buddiesTab();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
         return fragment;
     }
 

@@ -22,7 +22,7 @@
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -48,14 +48,9 @@
         <activity
             android:name=".tabbedMain"
             android:label="Fistbump"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-        </intent-filter>
-
-        <activity android:name=".WifiDirect" />
         <intent-filter>
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
@@ -65,6 +60,7 @@
         <activity android:name=".setProfilePic" />
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
+            android:screenOrientation="portrait"
             android:value=".setUserName" />
 
         <activity android:name=".conversation">
@@ -74,7 +70,8 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".tabbedMain" />
+                android:value=".tabbedMain"
+                android:screenOrientation="portrait"/>
         </activity>
     </application>
 </manifest>

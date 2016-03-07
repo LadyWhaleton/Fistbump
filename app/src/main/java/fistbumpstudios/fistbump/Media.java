@@ -9,6 +9,8 @@ import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -22,8 +24,7 @@ public class Media {
 
     private String fileName;
     private String mediaPath;
-    private Date dateTime;
-    private String timeReceived;
+    private long timestamp;
     private String mediaType;
     private String mimeType;
     private String fileExtension;
@@ -35,11 +36,11 @@ public class Media {
 
 
     // This constructor is called when a message is being loaded from a log
-    Media (String fileName, String mediaPath, String timeReceived, String ownerName, String id)
+    Media (String fileName, String mediaPath, long timestamp, String ownerName, String id)
     {
         this.fileName = fileName;
         this.mediaPath = mediaPath;
-        this.timeReceived = timeReceived;
+        this.timestamp = timestamp;
         this.ownerName = ownerName;
         this.id = id;
 
@@ -47,11 +48,11 @@ public class Media {
     }
 
     // This constructor is called when a message is sent
-    Media (String fileName, String mediaPath, String timeReceived, Buddy sender)
+    Media (String fileName, String mediaPath, long timestamp, Buddy sender)
     {
         this.fileName = fileName;
         this.mediaPath = mediaPath;
-        this.timeReceived = timeReceived;
+        this.timestamp = timestamp;
         this.ownerName = sender.getName();
         this.id = sender.getID();
         this.ownerProfilePic = sender.getProficPic();
@@ -92,9 +93,9 @@ public class Media {
         return this.ownerProfilePic;
     }
 
-    public String getTimestamp()
+    public long getTimestamp()
     {
-        return this.timeReceived;
+        return this.timestamp;
     }
 
     public String getMediaType()
@@ -136,14 +137,11 @@ public class Media {
         return Uri.fromFile(new File (getMediaPath()) );
     }
 
-    /** This function takes the time the file was received and gets the difference between
-     * now and then. So if a file was received on 2/1/13 at 1:00 PM and the current time is
-     * 2/1/13 at 2:01, it should display "an hour ago".
-     *
-     */
-    public String getElapsedTime()
+    public String getFormattedDate()
     {
-        return this.timeReceived;
+        DateFormat df = new SimpleDateFormat("MMM d',' yyyy 'at' h:mm a");
+        Date date = new Date(timestamp);
+        return df.format(date);
     }
 
 }
