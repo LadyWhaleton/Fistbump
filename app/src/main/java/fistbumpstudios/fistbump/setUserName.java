@@ -29,6 +29,7 @@ public class setUserName extends AppCompatActivity {
     }
 
     public String getMAC(){
+        WifiDirect.display_message(WifiDirect.p2p_mac_address + "\n");
         return WifiDirect.p2p_mac_address;
     }
 

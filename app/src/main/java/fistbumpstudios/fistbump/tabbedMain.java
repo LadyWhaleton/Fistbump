@@ -38,6 +38,8 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     NfcAdapter nfc;
     Context context;
 
+    public static buddiesTab buddiesTabFragment;
+
     private int[] tabIcons = {
             R.drawable.ic_contacts_pink_24dp,
             R.drawable.ic_chat_pink_24dp,
@@ -185,9 +187,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             switch(position)
             {
                 case 0:
-                    return new buddiesTab();
+                    buddiesTabFragment = new buddiesTab();
+                    return buddiesTabFragment;
                 case 1:
-                    return new buddiesTab();
+                    return new messagesTab();
                 case 2:
                     return new MediaGalleryTab();
                 default:

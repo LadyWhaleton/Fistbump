@@ -322,7 +322,7 @@ public class WifiDirect {
         });
     }*/
     static public void display_message(String message) {
-        Log.d("DEBUG", message);
+        Log.d("DISP_MSG", message);
     }
 
     // send_file sends a file to everybody

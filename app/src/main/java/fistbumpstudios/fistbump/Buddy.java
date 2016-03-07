@@ -20,6 +20,7 @@ public class Buddy {
         this.name = name;
         this.id = id;
         this.profilePic = image;
+        this.onlineStatus = false;
     }
 
     public String getName()
