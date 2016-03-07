@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -172,9 +173,8 @@ public class MediaGalleryTab extends Fragment {
         for (File f: FistbumpMediaFiles)
         {
             // TODO: remove this hardcoded values
-            DateFormat df = new SimpleDateFormat("MMM d',' yyyy 'at' h:mm a");
-            String timeCreated = df.format(new Date());
-            mediaList.add( new Media (f.getName(), f.toString(), timeCreated, "Wailord", "1337") );
+            long timeVal = new Date().getTime();
+            mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
         }
 
         // Update the Media Gallery
@@ -234,7 +234,7 @@ public class MediaGalleryTab extends Fragment {
 
             // set the timestamp
             TextView timestamp = (TextView) view.findViewById(R.id.gallery_item_timestamp);
-            timestamp.setText(mediaList.get(position).getTimestamp());
+            timestamp.setText(mediaList.get(position).getFormattedDate());
 
             TextView fileExt = (TextView) view.findViewById((R.id.gallery_item_fileExt));
             fileExt.setText(mediaList.get(position).getFileExt());
