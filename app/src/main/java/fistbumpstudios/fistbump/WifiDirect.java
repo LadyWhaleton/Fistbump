@@ -33,8 +33,8 @@ public class WifiDirect {
     public static WifiP2pManager.Channel mChannel;
     public static BroadcastReceiver mReceiver;
     public static IntentFilter mIntentFilter;
-    TextView message_area;
-    TextView input_area;
+    //TextView message_area;
+    //TextView input_area;
     public static ServerSocket serverSocket;
     public static Collection<Socket> clientSockets = new ArrayList<Socket>();
     public static  Map<String, Socket> mac_to_socket_map = new HashMap<String, Socket>();
@@ -59,10 +59,11 @@ public class WifiDirect {
     }
 
     public void send_button_press(View view) {
-        if (!clientSockets.isEmpty() && input_area.getText().length() > 0) {
+        /*if (!clientSockets.isEmpty() && input_area.getText().length() > 0) {
             send_message("The Destroyer", input_area.getText().toString(), null);
             input_area.setText("");
-        }
+        }*/
+        send_message("The Destroyer", "test", null);
     }
 
     public void send_file_button_press(View view) {

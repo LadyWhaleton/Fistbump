@@ -33,6 +33,8 @@ import java.io.File;
 public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNdefMessageCallback {
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Thread peer_discovery_thread = null;
+    private Object peer_discover_lock;
+    private boolean peer_discover_flag;
     NfcAdapter nfc;
     Context context;
 
@@ -94,6 +96,9 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
         WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
         WifiDirect.mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+        peer_discover_lock = new Object();
+        peer_discover_flag = true;
 
         peer_discovery_thread = new Thread(new Peer_discovery_thread());
         peer_discovery_thread.start();
@@ -232,12 +237,19 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     protected void onResume() {
         super.onResume();
         registerReceiver(WifiDirect.mReceiver, WifiDirect.mIntentFilter);
+        synchronized (peer_discover_lock) {
+            peer_discover_flag = true;
+            peer_discover_lock.notifyAll();
+        }
     }
 
     // unregister the broadcast receiver
     @Override
     protected void onPause() {
         super.onPause();
+        synchronized (peer_discover_lock) {
+            peer_discover_flag = false;
+        }
         unregisterReceiver(WifiDirect.mReceiver);
     }
 
@@ -245,6 +257,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         public void run() {
             while (true){
+
                 try {
                     WifiDirect.mManager.discoverPeers(WifiDirect.mChannel, new WifiP2pManager.ActionListener() {
                         @Override
@@ -261,6 +274,14 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
                         }
                     });
                     Thread.sleep(10000);
+                    synchronized (peer_discover_lock) {
+                        while (!peer_discover_flag) {
+                            try {
+                                peer_discover_lock.wait();
+                            } catch (InterruptedException e) {
+                            }
+                        }
+                    }
                 }
                 catch (InterruptedException e) {
                     e.printStackTrace();

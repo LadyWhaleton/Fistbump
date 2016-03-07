@@ -29,9 +29,7 @@ public class setUserName extends AppCompatActivity {
     }
 
     public String getMAC(){
-        WifiManager manager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo info = manager.getConnectionInfo();
-        return info.getMacAddress();
+        return WifiDirect.p2p_mac_address;
     }
 
     private void makeVerifyFile(String username){
