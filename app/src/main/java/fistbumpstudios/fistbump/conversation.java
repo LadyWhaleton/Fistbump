@@ -57,7 +57,7 @@ public class conversation extends AppCompatActivity {
             id = extras.getString("id");
         }
 
-        logFilename = buddyName + "_log.txt";
+        logFilename = "log.txt";
         setTitle(buddyName);
 
         //load messageLogs
@@ -141,19 +141,18 @@ public class conversation extends AppCompatActivity {
         @Override
         public View getView(int position, View view, ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
+            Message currentMsg = messages.get(position);
 
             // if there's no instance of this view
             if (view == null) {
-                view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
+                if (currentMsg.getSenderName().equals(tabbedMain.userName)) {
+                    view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
+                } else {
+                    view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
+                }
             }
 
 
-            Message currentMsg = messages.get(position);
-            if (currentMsg.getSenderName().equals(tabbedMain.userName)) {
-                view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
-            } else {
-                view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
-            }
 
             TextView body = (TextView) view.findViewById(R.id.msgBody);
             body.setText(currentMsg.getMessageBody());
