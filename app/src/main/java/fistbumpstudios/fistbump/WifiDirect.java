@@ -9,6 +9,7 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class WifiDirect {
 
@@ -115,13 +117,13 @@ public class WifiDirect {
                         String client_mac_address = new String(client_mac_address_buffer, "UTF-8");
                         mac_to_socket_map.put(client_mac_address, socket);
                         display_message(mac_to_socket_map.toString() + "\n");
-
                         clientSockets.add(socket);
                         if (friend_mac_addr != null) {
                             send_friend_request(tabbedMain.userName, friend_mac_addr, null);
+                            send_profile_pic(friend_mac_addr, null);
                             friend_mac_addr = null;
                         }
-                        send_profile_pic(null);
+
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
                     }
@@ -147,9 +149,9 @@ public class WifiDirect {
                         clientSockets.add(clientSocket);
                         if (friend_mac_addr != null) {
                             send_friend_request(tabbedMain.userName, friend_mac_addr, null);
+                            send_profile_pic(friend_mac_addr, null);
                             friend_mac_addr = null;
                         }
-                        send_profile_pic(null);
                         CommunicationThread commThread = new CommunicationThread(clientSocket);
                         new Thread(commThread).start();
                         break;
@@ -262,7 +264,7 @@ public class WifiDirect {
                     else if (option == 3) // directed friend request
                     {
                         // name is their name
-                        // aux is our mac address
+                        // aux is our request mac address
                         // text is their mac address
                         byte text_byte_arr[] = new byte [text_size];
                         bytesread = is.read(text_byte_arr, 0, text_size);
@@ -295,9 +297,9 @@ public class WifiDirect {
                         {
                             if (serverSocket != null)
                             {
-                                send_friend_request(name, text, clientSocket);
-                            }
+                                //TODO: make friend request redistribution
                                 display_message("Redistribute Friend Request" + name + " " + auxillary + " " + text);
+                            }
                         }
 
                     }
@@ -305,7 +307,7 @@ public class WifiDirect {
                     {
                         // TODO: receive friend picture
                         // name is picture name
-                        // aux is friend mac
+                        // aux is request direction mac
                         // text is the picture file to be sent
 
                         byte file_buffer[] = new byte[1024];
@@ -326,14 +328,22 @@ public class WifiDirect {
                         display_message(text_size + "\n");
 
                         display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
+                        boolean buddy_found = false;
+                        String[] file_split = name.split(Pattern.quote("."));
 
                         for (Buddy buddy : buddiesTab.Buddies)
                         {
-                            if (buddy.getID().equals(auxillary))
+                            if (buddy.getID().equals(file_split[0])) {
                                 buddy.changeProfilePic(Uri.fromFile(file));
+                                buddy_found = true;
+                            }
                         }
-                        if (serverSocket != null) // redistribute file if server
-                            send_file(file.getPath(), file.getName(), clientSocket);
+                        if (!auxillary.equals(p2p_mac_address)) {
+                            if (serverSocket != null) // redistribute file if server
+                                ;//TODO: make profile pic redistribution
+                            if (!buddy_found)
+                                file.delete();
+                        }
                     }
                     else // error, we just kill the current thread and try again with a new one.
                     {
@@ -539,6 +549,10 @@ public class WifiDirect {
                     to_remove.add(clientSocket);
                     continue;
                 }
+                if (!mac_to_socket_map.get(friend_mac_address).equals(clientSocket))
+                {
+                    continue;
+                }
                 DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
 
                 outputStream.write(bytes, 0, 16); // write 16 protocol bytes
@@ -560,17 +574,19 @@ public class WifiDirect {
         to_remove.clear();
     }
 
-    static public void send_profile_pic(Socket to_exclude)
+    static public void send_profile_pic(String friend_mac, Socket to_exclude)
     {
         if (!clientSockets.isEmpty()) {
             int option = 4;
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabbedMain.context);
             String picturePath = preferences.getString("profilePic", null);
+            if (picturePath == null)
+                return;
 
             String name = p2p_mac_address + picturePath.substring(picturePath.length() - 4);
             WifiDirect.display_message(name);
             int name_length = name.length();
-            String auxillary = p2p_mac_address;
+            String auxillary = friend_mac;
             int aux_length = auxillary.length();
             File file = new File(picturePath);
             // Get the size of the file
@@ -599,11 +615,15 @@ public class WifiDirect {
                         to_remove.add(clientSocket);
                         continue;
                     }
+                    if (!mac_to_socket_map.get(friend_mac).equals(clientSocket))
+                    {
+                        continue;
+                    }
 
                     OutputStream outputStream = clientSocket.getOutputStream();
                     copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
                     copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
-                    copy_Byte_Array(bytes, int_To_Byte_Array(aux_length), 8, 4); //auxillary
+                    copy_Byte_Array(bytes, int_To_Byte_Array(aux_length), 8, 4);
                     copy_Byte_Array(bytes, int_To_Byte_Array(file_length), 12, 4);
                     outputStream.write(bytes, 0, 16);
                     outputStream.write(name.getBytes());
