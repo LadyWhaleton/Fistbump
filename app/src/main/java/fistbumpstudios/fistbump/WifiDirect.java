@@ -188,7 +188,7 @@ public class WifiDirect {
             obj.put("body", msg);
             obj.put("time", timeCreated);
 
-            FileOutputStream fos = tabbedMain.context.openFileOutput( name + "_log.txt", Context.MODE_PRIVATE | Context.MODE_APPEND);
+            FileOutputStream fos = tabbedMain.context.openFileOutput( "log.txt", Context.MODE_PRIVATE | Context.MODE_APPEND);
             OutputStreamWriter out = new OutputStreamWriter(fos);
             out.append(obj.toString());
             out.append(System.getProperty("line.separator"));
@@ -196,7 +196,7 @@ public class WifiDirect {
             fos.close();
 
             String message;
-            FileInputStream fis = tabbedMain.context.openFileInput(name + "_log.txt");
+            FileInputStream fis = tabbedMain.context.openFileInput("log.txt");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader br = new BufferedReader(isr);
             StringBuffer sb = new StringBuffer();
@@ -206,7 +206,6 @@ public class WifiDirect {
                 conversation.messages.add(m);
                 WifiDirect.display_message(m.getBody());
             }
-
         }
 
         public CommunicationThread(Socket clientSocket) {
