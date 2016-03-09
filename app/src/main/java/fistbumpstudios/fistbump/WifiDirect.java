@@ -118,8 +118,8 @@ public class WifiDirect {
                         display_message(mac_to_socket_map.toString() + "\n");
                         clientSockets.add(socket);
                         if (friend_mac_addr != null) {
-                            send_friend_request(tabbedMain.userName, friend_mac_addr, null);
-                            send_profile_pic(friend_mac_addr, null);
+                            send_friend_request(friend_mac_addr);
+                            send_profile_pic(friend_mac_addr);
                             friend_mac_addr = null;
                         }
 
@@ -146,8 +146,8 @@ public class WifiDirect {
                         clientSocket.getOutputStream().write(p2p_mac_address.getBytes(), 0, 17);
                         clientSockets.add(clientSocket);
                         if (friend_mac_addr != null) {
-                            send_friend_request(tabbedMain.userName, friend_mac_addr, null);
-                            send_profile_pic(friend_mac_addr, null);
+                            send_friend_request(friend_mac_addr);
+                            send_profile_pic(friend_mac_addr);
                             friend_mac_addr = null;
                         }
                         CommunicationThread commThread = new CommunicationThread(clientSocket);
@@ -265,6 +265,7 @@ public class WifiDirect {
                         String text = new String(text_byte_arr, "UTF-8");
                         display_message(name + ": " + text + "\n");
 
+
                         try {
                             openTxtLog(name, text);
                         } catch (JSONException e) {
@@ -272,7 +273,7 @@ public class WifiDirect {
                         }
 
 
-
+                        
                         if (serverSocket != null) // if server, redistribute
                             send_message(name, text, clientSocket);
 
@@ -334,6 +335,7 @@ public class WifiDirect {
                             if (serverSocket != null)
                             {
                                 //TODO: make friend request redistribution
+                                redirect_friend_request(name, auxillary, text);
                                 display_message("Redistribute Friend Request" + name + " " + auxillary + " " + text);
                             }
                         }
@@ -392,10 +394,6 @@ public class WifiDirect {
                         return;
                     }
 
-                    //for (int i = 0; i < bytesread; ++i)
-                    //  what += (char)buffer[i];
-
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -406,32 +404,6 @@ public class WifiDirect {
 
     }
 
-
-/*
-    @Override
-    protected void onResume() {
-        super.onResume();
-        registerReceiver(mReceiver, mIntentFilter);
-    }
-
-    // unregister the broadcast receiver
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mReceiver);
-    }*/
-
-    /*public void display_message(String message) {
-        final String msg = message;
-        WifiDirect.this.runOnUiThread(new Runnable() {
-
-
-            @Override
-            public void run() {
-                message_area.append(msg);
-            }
-        });
-    }*/
     static public void display_message(String message) {
         Log.d("DISP_MSG", message);
     }
@@ -554,13 +526,13 @@ public class WifiDirect {
         to_remove.clear();
     }
 
-    // send_message sends a message to everybody
-    // name is the name of the sender
-    // mac_address is mac of friend
-    // to_exclude is the socket to be ignored on send, used by server
-    static public void send_friend_request(String name, String friend_mac_address, Socket to_exclude)
+    static public void send_friend_request(String friend_mac_address)
     {
+        //TODO: check if server and use other func
+        if (serverSocket != null)
+            redirect_friend_request(tabbedMain.userName, p2p_mac_address, friend_mac_address);
         int option = 3;
+        String name = tabbedMain.userName;
         int name_length = name.length();
         int dst_length = friend_mac_address.length();
         String our_mac_address = p2p_mac_address;
@@ -577,16 +549,9 @@ public class WifiDirect {
 
         for (Socket clientSocket : clientSockets) {
             try {
-                if (to_exclude != null) // skips excluded sockets
-                    if (to_exclude.equals(clientSocket))
-                        continue;
                 if (!clientSocket.isConnected()) // skips and removes dead sockets
                 {
                     to_remove.add(clientSocket);
-                    continue;
-                }
-                if (!mac_to_socket_map.get(friend_mac_address).equals(clientSocket))
-                {
                     continue;
                 }
                 DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
@@ -604,14 +569,13 @@ public class WifiDirect {
         }
         // removes bad sockets
         for (Socket remove_socket : to_remove)
-        {
             clientSockets.remove(remove_socket);
-        }
         to_remove.clear();
     }
 
-    static public void send_profile_pic(String friend_mac, Socket to_exclude)
+    static public void send_profile_pic(String friend_mac)
     {
+        //TODO: check if server and use other func
         if (!clientSockets.isEmpty()) {
             int option = 4;
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(tabbedMain.context);
@@ -634,25 +598,13 @@ public class WifiDirect {
             display_message(String.valueOf(file_length) + "\n");
             byte bytes[] = new byte[1024];
 
-
-            //for (int i = 0; i < 12; ++i)
-            //display_message(String.valueOf(bytes[i]));
-
-            //display_message(name + text);
             Collection<Socket> to_remove = new ArrayList<Socket>();
 
             for (Socket clientSocket : clientSockets) {
                 try {
-                    if (to_exclude != null)
-                        if (to_exclude.equals(clientSocket))
-                            continue;
                     if (!clientSocket.isConnected())
                     {
                         to_remove.add(clientSocket);
-                        continue;
-                    }
-                    if (!mac_to_socket_map.get(friend_mac).equals(clientSocket))
-                    {
                         continue;
                     }
 
@@ -682,13 +634,45 @@ public class WifiDirect {
                 }
             }
             for (Socket remove_socket : to_remove)
-            {
                 clientSockets.remove(remove_socket);
-            }
             to_remove.clear();
         }
     }
 
+    static public void redirect_friend_request(String name, String origin_mac_address, String dest_mac_address)
+    {
+        int option = 3;
+        int name_length = name.length();
+        int dst_length = dest_mac_address.length();
 
+        int message_length = origin_mac_address.length();
+
+        byte bytes[] = new byte[16];
+        copy_Byte_Array(bytes, int_To_Byte_Array(option), 0, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(name_length), 4, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(dst_length), 8, 4);
+        copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 12, 4);
+        Socket clientSocket = mac_to_socket_map.get(dest_mac_address);
+
+        try {
+            if (!clientSocket.isConnected()) // skips and removes dead sockets
+            {
+                clientSockets.remove(clientSocket);
+            }
+            else
+            {
+                DataOutputStream outputStream = new DataOutputStream(clientSocket.getOutputStream());
+
+                outputStream.write(bytes, 0, 16); // write 16 protocol bytes
+                outputStream.write(name.getBytes()); // writes name of sender
+                outputStream.write(dest_mac_address.getBytes()); // writes dest mac
+                outputStream.write(origin_mac_address.getBytes()); // writes orig message
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            // in the event of an exception, remove the socket
+        }
+    }
 
 }
