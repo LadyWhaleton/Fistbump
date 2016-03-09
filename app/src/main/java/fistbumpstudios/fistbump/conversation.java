@@ -35,8 +35,9 @@ public class conversation extends AppCompatActivity {
     String username, buddyName;
     String logFilename;
     String id;
-    ListView convolistView;
+    public static ListView convolistView;
     Context context;
+    public static ArrayAdapter<Message> convAdapater;
     public static List<Message> messages;
 
     int RESULTCODE = 1;
@@ -70,10 +71,37 @@ public class conversation extends AppCompatActivity {
 
         //populate messages
         LiveUpdateConversaition();
+        new Thread() {
+
+            public void run() {
+                int i = 0;
+                while (i++ < 1000) {
+                    try {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                try {
+                                    readConvLog();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }.start();
+
     }
 
     public void LiveUpdateConversaition() {
-        ArrayAdapter<Message> convAdapater = new convListAdapter(context);
+        convAdapater = new convListAdapter(context);
         convolistView.setAdapter(convAdapater);
     }
 
@@ -103,7 +131,9 @@ public class conversation extends AppCompatActivity {
         messages.add(msg);
     }
 
-    private class convListAdapter extends ArrayAdapter<Message> {
+
+
+    public static class convListAdapter extends ArrayAdapter<Message> {
         public convListAdapter(Context context) {
             super(context, R.layout.listview_bubble_left, messages);
         }
@@ -119,7 +149,7 @@ public class conversation extends AppCompatActivity {
 
 
             Message currentMsg = messages.get(position);
-            if (currentMsg.getSenderName().equals(username)) {
+            if (currentMsg.getSenderName().equals(tabbedMain.userName)) {
                 view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
             } else {
                 view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
@@ -136,18 +166,19 @@ public class conversation extends AppCompatActivity {
 //            pic.setImageDrawable(myDrawable);
             return view;
         }
+
+
     }
+
 
     public void sendMessage(View view) throws IOException, JSONException {
         EditText mEdit = (EditText) findViewById(R.id.messageText);
-
         DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
         String timeCreated = df.format(new Date());
-
+        String msg = mEdit.getText().toString();
         JSONObject obj = new JSONObject();
         obj.put("name", buddyName);
-        obj.put("id", "2213");
-        obj.put("body", mEdit.getText().toString());
+        obj.put("body", msg);
         obj.put("time", timeCreated);
 
         FileOutputStream fos = openFileOutput(logFilename, Context.MODE_PRIVATE | MODE_APPEND);
@@ -160,6 +191,8 @@ public class conversation extends AppCompatActivity {
         readConvLog();
         mEdit.setText("");
         mEdit.clearFocus();
+
+        WifiDirect.send_message(tabbedMain.userName, msg , null);
     }
 
 
@@ -178,6 +211,7 @@ public class conversation extends AppCompatActivity {
         if (resultCode == RESULT_OK){
             Uri uri = data.getData();
             String filePath = uri.getPath();
+
         }
     }
 }

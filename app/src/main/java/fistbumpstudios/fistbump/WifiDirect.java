@@ -6,33 +6,32 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-import java.io.FileOutputStream;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -137,7 +136,6 @@ public class WifiDirect {
 
     static class ClientThread implements Runnable {
         private Socket clientSocket;
-
         public void run() {
             while (true) {
                 try {
@@ -180,6 +178,35 @@ public class WifiDirect {
         {
             return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16)
                     | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+        }
+
+        private void openTxtLog(String name, String msg) throws JSONException, IOException {
+            JSONObject obj = new JSONObject();
+            DateFormat df = new SimpleDateFormat("HH:mm MM/dd");
+            String timeCreated = df.format(new Date());
+            obj.put("name", name);
+            obj.put("body", msg);
+            obj.put("time", timeCreated);
+
+            FileOutputStream fos = tabbedMain.context.openFileOutput( name + "_log.txt", Context.MODE_PRIVATE | Context.MODE_APPEND);
+            OutputStreamWriter out = new OutputStreamWriter(fos);
+            out.append(obj.toString());
+            out.append(System.getProperty("line.separator"));
+            out.flush();
+            fos.close();
+
+            String message;
+            FileInputStream fis = tabbedMain.context.openFileInput(name + "_log.txt");
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader br = new BufferedReader(isr);
+            StringBuffer sb = new StringBuffer();
+            while ((message = br.readLine()) != null) {
+                obj = new JSONObject(message);
+                Message m = new Message(obj.getString("name"), "id" , obj.getString("body"), obj.getString("time"));
+                conversation.messages.add(m);
+                WifiDirect.display_message(m.getBody());
+            }
+
         }
 
         public CommunicationThread(Socket clientSocket) {
@@ -239,8 +266,18 @@ public class WifiDirect {
                         String text = new String(text_byte_arr, "UTF-8");
                         display_message(name + ": " + text + "\n");
 
+
+                        try {
+                            openTxtLog(name, text);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        
                         if (serverSocket != null) // if server, redistribute
                             send_message(name, text, clientSocket);
+
                     }
                     else if (option == 2) // file to all
                     {
