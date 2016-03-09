@@ -38,9 +38,7 @@ public class SplashActivity extends Activity {
         frameAnimation.start();
 
 
-        Intent intent = new Intent(this, tabbedMain.class);
-        startActivity(intent);
-        finish();
+
     }
 
 
