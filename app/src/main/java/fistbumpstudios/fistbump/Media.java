@@ -100,6 +100,10 @@ public class Media {
         return this.timestamp;
     }
 
+    public Date getDateTime() {
+        return new Date(this.timestamp);
+    }
+
     public String getMediaType()
     {
         return this.mediaType;
@@ -145,5 +149,4 @@ public class Media {
         Date date = new Date(timestamp);
         return df.format(date);
     }
-
 }

@@ -19,8 +19,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +43,8 @@ public class MediaGalleryTab extends Fragment {
     TextView emptyGridView;
     SwipeRefreshLayout swipeLayout;
     ArrayAdapter<Media> galleryAdapter;
+
+    private String mediaLogName = "mediaInfo.txt";
 
     private String folderName = Environment.getExternalStorageDirectory().toString() + "/Fistbump";
     public static List<Media> mediaList;
@@ -161,6 +173,66 @@ public class MediaGalleryTab extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * This function converts a json object to a Media object.
+     */
+    private void jsonToMedia(JSONObject obj) throws JSONException {
+        addMedia(obj.getString("name"), obj.getString("body"), obj.getString("time"));
+    }
+
+    private void addMedia(String name, String body, String timestamp) {
+        long timeReceived = Long.valueOf(timestamp);
+
+        //Media m = new Media(name, "2123123", body, timestamp);
+        //mediaList.add(m);
+    }
+
+    private void readFromMediaLog() throws JSONException, IOException
+    {
+        // Read from the Media Info log
+        String message;
+        FileInputStream fis = getContext().openFileInput(mediaLogName);
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader br = new BufferedReader(isr);
+        StringBuffer sb = new StringBuffer();
+
+        while ((message = br.readLine()) != null) {
+            JSONObject obj = new JSONObject(message);
+            jsonToMedia(obj);
+        }
+    }
+
+    private void LoadAllMedia()
+    {
+        File FistbumpDir = new File(folderName);
+        File[] FistbumpMediaFiles = FistbumpDir.listFiles();
+
+        /*
+
+        for (File f : FistbumpMediaFiles)
+            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
+        */
+
+        // For each file, create a Media object
+        for (File f: FistbumpMediaFiles)
+        {
+            // TODO: remove this hardcoded values
+            long timeVal = new Date().getTime();
+            mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
+        }
+    }
+
+    private void SortMediaList()
+    {
+        Collections.sort(mediaList, new Comparator<Media>() {
+            public int compare(Media m1, Media m2) {
+                return m2.getDateTime().compareTo(m1.getDateTime());
+            }
+        });
+
+        Collections.sort(mediaList, Collections.reverseOrder());
+    }
+
     /** The Load Media function should load shared files from storage. Load Media should be able to
       * detect different kinds of files (photos, videos, songs) and display thumbnails. Files
       * should be populated by most recent first. For example:
@@ -172,24 +244,18 @@ public class MediaGalleryTab extends Fragment {
     private void LoadMedia()
     {
         // TODO: Implement LoadMedia
-        // Get MediaList log file
+        mediaList.clear();
 
-        mediaList = new ArrayList<>();
-        File FistbumpDir = new File(folderName);
-        File[] FistbumpMediaFiles = FistbumpDir.listFiles();
+        /**
+        long time = new Date().getTime();
+        Toast.makeText(getContext(), String.valueOf(time), Toast.LENGTH_SHORT).show();
 
+        String timestamp = String.valueOf(time);
+        long timeReceived = Long.valueOf(timestamp);
+        Toast.makeText(getContext(), "Converted: " + String.valueOf(timeReceived), Toast.LENGTH_SHORT).show();
+        */
 
-//        for (File f : FistbumpMediaFiles)
-//            Toast.makeText(getContext(), f.toString(), Toast.LENGTH_SHORT).show();
-//         */
-
-        // For each file, create a Media object
-        for (File f: FistbumpMediaFiles)
-        {
-            // TODO: remove this hardcoded values
-            long timeVal = new Date().getTime();
-            mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
-        }
+        LoadAllMedia();
 
     }
 

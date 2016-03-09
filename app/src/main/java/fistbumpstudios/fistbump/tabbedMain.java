@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -14,21 +15,30 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,6 +63,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             R.drawable.ic_perm_media_pink_24dp
     };
     private ViewPager mViewPager;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +89,29 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // set title font
+        Typeface titleFont = Typeface.createFromAsset(getAssets(), "BuxtonSketch.ttf");
+        TextView titleText = (TextView) findViewById(R.id.textview_appTitle);
+        titleText.setTypeface(titleFont);
+
+        // navigation drawer
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        // Set Username and Profile pic in Navigation Drawer
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView =  navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.textview_navUsername);
+        ImageView navProfilePic = (ImageView) headerView.findViewById(R.id.imageview_navProfic);
+
+        navUsername.setText(userName);
+        navUsername.setTypeface(titleFont);
+        navProfilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile_gray));
 
         //make dialog
 

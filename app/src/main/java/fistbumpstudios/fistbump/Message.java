@@ -2,6 +2,10 @@ package fistbumpstudios.fistbump;
 
 import android.net.Uri;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Ryota on 2/28/2016.
  */
@@ -54,6 +58,13 @@ public class Message {
     public String getTimeStamp()
     {
         return this.timeCreated;
+    }
+    public String getFormattedDate()
+    {
+        long timestamp = Long.valueOf(timeCreated);
+        DateFormat df = new SimpleDateFormat("MMM d',' yyyy 'at' h:mm a");
+        Date date = new Date(timestamp);
+        return df.format(date);
     }
 
 }
