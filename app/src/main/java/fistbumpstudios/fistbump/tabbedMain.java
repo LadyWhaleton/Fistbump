@@ -25,10 +25,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +63,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             R.drawable.ic_perm_media_pink_24dp
     };
     private ViewPager mViewPager;
+    ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,16 +97,21 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         // navigation drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        
-        /*
+        // Set Username and Profile pic in Navigation Drawer
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener((NavigationView.OnNavigationItemSelectedListener) this);
-        */
+        View headerView =  navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.textview_navUsername);
+        ImageView navProfilePic = (ImageView) headerView.findViewById(R.id.imageview_navProfic);
+
+        navUsername.setText(userName);
+        navUsername.setTypeface(titleFont);
+        navProfilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile_gray));
 
         //make dialog
 
