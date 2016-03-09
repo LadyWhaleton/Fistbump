@@ -76,13 +76,8 @@ public class MediaGalleryTab extends Fragment {
         // check if the file directory has been created for Fistbump. If not, make one.
         File fistbumpFolder = new File(folderName);
 
-        if(!fistbumpFolder.exists()) {
+        if(!fistbumpFolder.exists())
             fistbumpFolder.mkdirs();
-            //Toast.makeText(getContext(), fistbumpFolder + " created!", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            //Toast.makeText(getContext(), fistbumpFolder + " already exists!", Toast.LENGTH_SHORT).show();
-        }
 
         mediaList = new ArrayList<>();
         galleryGridView = (GridView) getView().findViewById(R.id.galleryGridView);
@@ -195,8 +190,6 @@ public class MediaGalleryTab extends Fragment {
             long timeVal = new Date().getTime();
             mediaList.add( new Media (f.getName(), f.toString(), timeVal, "Wailord", "1337") );
         }
-
-
 
     }
 

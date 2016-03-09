@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
@@ -88,9 +89,10 @@ public class Media {
         return this.ownerName;
     }
 
-    public Uri getOwnerProfilePic()
+    public Bitmap getOwnerProfilePic()
     {
-        return this.ownerProfilePic;
+        File pic = new File (Environment.getExternalStorageDirectory().toString() + "/FistBump/ProfilePics/" + fileName);
+        return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(pic.toString()), 256, 256);
     }
 
     public long getTimestamp()
@@ -134,7 +136,7 @@ public class Media {
 
     public Uri getUriFromFileName()
     {
-        return Uri.fromFile(new File (getMediaPath()) );
+        return Uri.fromFile(new File(getMediaPath()));
     }
 
     public String getFormattedDate()
