@@ -36,6 +36,9 @@ public class SplashActivity extends Activity {
 
         // Start the animation (looped playback by default).
         frameAnimation.start();
+
+
+
     }
 
 

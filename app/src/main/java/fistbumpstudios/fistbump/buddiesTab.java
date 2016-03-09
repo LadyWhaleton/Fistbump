@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.net.wifi.WpsInfo;
@@ -185,6 +184,7 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         if (v.getId() == R.id.buddylistView) {
             menu.setHeaderTitle("Select an Action");
             menu.add(0, v.getId(), 0, "Connect");
+            menu.add(0, v.getId(), 0, "Send Message");
             menu.add(0, v.getId(), 0, "Edit");
             menu.add(0, v.getId(), 0, "Delete");
         }
@@ -194,11 +194,6 @@ public class buddiesTab extends android.support.v4.app.Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         if (item.getTitle().equals("Connect")) {
 
-            //Intent intent = new Intent(getActivity() , conversation.class);
-            //intent.putExtra("name", buddyname);
-            //intent.putExtra("id", macAddr);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-            //startActivity(intent);
             if (!WiFiDirectBroadcastReceiver.connected_devices.contains(macAddr)) {
                 //Toast.makeText(getContext(), "Connect!", Toast.LENGTH_SHORT).show();
                 WifiDirect.friend_mac_addr = new String(macAddr);
@@ -225,6 +220,14 @@ public class buddiesTab extends android.support.v4.app.Fragment {
                 });
             }
         }
+        else if (item.getTitle().equals("Send Message")) {
+            Intent intent = new Intent(getActivity() , conversation.class);
+            intent.putExtra("name", buddyname);
+            intent.putExtra("id", macAddr);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+        }
+
         else if (item.getTitle().equals("Edit")) {
             Toast.makeText(getContext(), "Editing", Toast.LENGTH_SHORT).show();
         }
