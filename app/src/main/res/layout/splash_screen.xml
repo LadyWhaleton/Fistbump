@@ -2,16 +2,26 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    >
+    android:background="@color/background">
 
 
     <ImageView
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:id="@+id/splash_iv"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
         android:contentDescription="Animation"
-        />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="220dp" />
+
+    <TextView
+        android:id="@+id/splash_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Splash Text"
+        android:textColor="@color/pink"
+        android:layout_below="@+id/splash_iv"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:alpha=".60" />
 </RelativeLayout>
