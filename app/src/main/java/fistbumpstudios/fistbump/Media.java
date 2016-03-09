@@ -29,6 +29,7 @@ public class Media {
     private String mediaType;
     private String mimeType;
     private String fileExtension;
+    private Bitmap thumbnail;
 
     // info about the media's original sender
     private String ownerName;
@@ -45,7 +46,9 @@ public class Media {
         this.ownerName = ownerName;
         this.id = id;
 
+        // setThumbnail must be called after setMediaType
         setMediaType();
+        setThumbnail();
     }
 
     // This constructor is called when a message is sent
@@ -58,7 +61,9 @@ public class Media {
         this.id = sender.getID();
         this.ownerProfilePic = sender.getProficPic();
 
+        // setThumbnail must be called after setMediaType
         setMediaType();
+        setThumbnail();
     }
 
     // This helper function should be called when you are creating a new media object
@@ -82,6 +87,19 @@ public class Media {
             this.mimeType = "?";
             this.fileExtension = "?";
         }
+    }
+
+    private void setThumbnail()
+    {
+        // check the file type of the media. Is it an image, video, or song?
+        if (this.mediaType.equals("image"))
+            this.thumbnail = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(this.mediaPath), 256, 256);
+
+        else if (this.mediaType.equals("video"))
+            this.thumbnail = ThumbnailUtils.createVideoThumbnail(mediaPath, MediaStore.Images.Thumbnails.MINI_KIND);
+
+        else
+            thumbnail =  null;
     }
 
     public String getOwnerName()
@@ -124,18 +142,9 @@ public class Media {
         return mediaPath;
     }
 
-    public Bitmap getThumbnail(ContentResolver cr)
+    public Bitmap getThumbnail()
     {
-        // check the file type of the media. Is it an image, video, or song?
-        if (this.mediaType.equals("image"))
-            return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(this.mediaPath), 256, 256);
-
-        else if (this.mediaType.equals("video"))
-            return ThumbnailUtils.createVideoThumbnail(mediaPath, MediaStore.Images.Thumbnails.MINI_KIND);
-
-        else
-            return null;
-
+        return this.thumbnail;
     }
 
     public Uri getUriFromFileName()

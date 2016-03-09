@@ -291,7 +291,7 @@ public class MediaGalleryTab extends Fragment {
 
             // obtain a thumbnail for the media
             ImageView gallery_item = (ImageView) view.findViewById(R.id.gallery_item);
-            Bitmap thumbnail = mediaList.get(position).getThumbnail(getContext().getContentResolver());
+            Bitmap thumbnail = mediaList.get(position).getThumbnail();
 
             // set the thumbnail according to it's file type (image, video, audio, etc)
             if (thumbnail != null)
