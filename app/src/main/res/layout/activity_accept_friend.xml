@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -14,28 +15,31 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Accept this friend?"
-        android:id="@+id/textView3"
+        android:textColor="@color/white"
+        android:id="@+id/textview_acceptFriend"
+        android:layout_marginTop="158dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Yes"
         android:onClick="accept"
         android:id="@+id/acceptButton"
-        android:layout_marginBottom="41dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/textView3" />
+        android:background="@drawable/gbutton"
+        android:textColor="@color/white"
+        android:layout_alignTop="@+id/rejectButton"
+        android:layout_alignStart="@+id/textview_acceptFriend" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No"
         android:onClick="reject"
+        android:background="@drawable/gbutton"
+        android:textColor="@color/white"
         android:id="@+id/rejectButton"
-        android:layout_alignTop="@+id/acceptButton"
+        android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/acceptButton" />
 </RelativeLayout>

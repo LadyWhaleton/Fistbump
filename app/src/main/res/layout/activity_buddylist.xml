@@ -22,7 +22,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FFFF"
+        android:textColor="@color/pink"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/no_friends"
         android:id="@+id/emptyBuddylistView"

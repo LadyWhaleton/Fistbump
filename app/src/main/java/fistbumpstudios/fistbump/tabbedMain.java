@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -25,10 +26,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -78,6 +81,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Typeface titleFont = Typeface.createFromAsset(getAssets(), "BuxtonSketch.ttf");
+        TextView titleText = (TextView) findViewById(R.id.textview_appTitle);
+        titleText.setTypeface(titleFont);
 
         //make dialog
 

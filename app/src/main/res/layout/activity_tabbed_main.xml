@@ -37,6 +37,17 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay">
 
+                <TextView
+                    android:id="@+id/textview_appTitle"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="15dp"
+                    android:gravity="center"
+                    android:text="Fistbump"
+                    android:textSize="25dp"
+                    android:textColor="@color/white"/>
+
+
                 <!-- Toolbar icons
                 <ImageButton
                     android:layout_width="32dp"
@@ -62,7 +73,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_gravity="fill"
                 app:tabTextColor="@color/pink"
-                app:tabIndicatorColor="#e91e63"/>
+                app:tabIndicatorColor="@color/pink"/>
 
         </android.support.design.widget.AppBarLayout>
 
