@@ -21,7 +21,7 @@
     <string name="no_friends">You have no friends. :(</string>
     <string name="title_activity_nav_drawer">navDrawer</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open</string>
+    <string name="navigation_drawer_close">Close</string>
 
 </resources>
