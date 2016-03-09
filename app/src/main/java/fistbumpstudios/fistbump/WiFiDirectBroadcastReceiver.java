@@ -3,6 +3,7 @@ package fistbumpstudios.fistbump;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.NetworkInfo;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
@@ -12,6 +13,7 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import java.net.InetAddress;
@@ -32,7 +34,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private WifiP2pManager.Channel mChannel;
     private tabbedMain activity;
     public static WifiP2pManager.PeerListListener myPeerListListener;
-    private Set<String> connected_devices = new HashSet<String>();
+    public static Set<String> connected_devices = new HashSet<String>();
     private List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     private boolean connect_flag;
 
@@ -123,47 +125,22 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             if (mManager != null)
             {
                 mManager.requestPeers(mChannel, peerListListener);
-
+                for (Buddy buddy : buddiesTab.Buddies) {
+                    buddy.changeOnlineStatus(false);
+                }
                 for (int i = 0; i < peers.size(); ++i)
                 {
                     final WifiP2pDevice device = peers.get(i);
-                    //TODO: update friend
+
                     for (Buddy buddy : buddiesTab.Buddies) {
                         if (buddy.getID().equals(device.deviceAddress))
                         {
                             buddy.changeOnlineStatus(true);
-                            Toast.makeText(context, "Found " + buddy.getName(), Toast.LENGTH_SHORT).show();
                         }
                     }
-                    /*if (!connected_devices.contains(device.deviceAddress)) {
-                        WifiP2pConfig config = new WifiP2pConfig();
-                        config.deviceAddress = device.deviceAddress;
-                        config.wps.setup = WpsInfo.PBC;
-                        connect_flag = false;
-                        mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
-                            @Override
-                            public void onSuccess() {
-                                //success logic
-                                //String msg = "I have connected with ";
-                                //msg += device.deviceName;
-                                //msg += " with MAC: ";
-                                //msg += device.deviceAddress;
-                                //msg += "\n";
-                                //activity.display_message(msg);
-                                connect_flag = true;
-                                //connected_devices.add(device.deviceAddress);
-                            }
-
-                            @Override
-                            public void onFailure(int reason) {
-                                //failure logic
-                                //activity.display_message("I have failed to connected!\n");
-                            }
-                        });
-                        if (connect_flag)
-                            break;
-                    }*/
                 }
+                tabbedMain.buddiesTabFragment.buddyAdapter.notifyDataSetChanged();
+                tabbedMain.buddiesTabFragment.buddylistView.invalidateViews();
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -185,11 +162,14 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
             // Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-            WifiP2pDevice device = (WifiP2pDevice) intent
-                    .getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
+            WifiP2pDevice device = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
 
             WifiDirect.p2p_mac_address = device.deviceAddress;
             WifiDirect.display_message(device.deviceAddress + "\n");
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("MAC", WifiDirect.p2p_mac_address);
+            editor.apply();
 
 
 

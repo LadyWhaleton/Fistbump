@@ -20,6 +20,20 @@ public class SplashActivity extends Activity {
         // Get the background, which has been compiled to an AnimationDrawable object.
         AnimationDrawable frameAnimation = (AnimationDrawable) img.getBackground();
 
+        Thread timerThread = new Thread(){
+            public void run(){
+                try{
+                    sleep(2000);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }finally{
+                    Intent intent = new Intent(SplashActivity.this, tabbedMain.class);
+                    startActivity(intent);
+                }
+            }
+        };
+        timerThread.start();
+
         // Start the animation (looped playback by default).
         frameAnimation.start();
 
@@ -28,5 +42,9 @@ public class SplashActivity extends Activity {
         startActivity(intent);
         finish();
     }
+
+
+
 }
+
 

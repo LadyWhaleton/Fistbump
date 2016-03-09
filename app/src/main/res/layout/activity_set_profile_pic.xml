@@ -7,27 +7,28 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/background"
     tools:context="fistbumpstudios.fistbump.setProfilePic">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Click on the image to set your profile picture"
+        android:text="Choose your profile picture."
         android:id="@+id/textView5"
+        android:textColor="@color/white"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_centerHorizontal="true" />
 
     <ImageView
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="130dp"
         android:id="@+id/profilePreview"
         android:onClick="selectProfilePic"
         android:src="@drawable/placeholder"
-        android:layout_below="@+id/textView5"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/nextButton" />
+        android:layout_above="@+id/nextButton"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="25dp" />
 
     <Button
         android:layout_marginTop="20dp"
@@ -35,7 +36,9 @@
         android:layout_height="wrap_content"
         android:text="next"
         android:id="@+id/nextButton"
+        android:textColor="@color/white"
         android:onClick="verifyPic"
+        android:background="@drawable/gbutton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="183dp" />
@@ -43,9 +46,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your picture can be changed later in settings"
+        android:text="You can change your picture later in Settings."
         android:id="@+id/textView2"
-        android:layout_marginTop="68dp"
-        android:layout_alignTop="@+id/nextButton"
+        android:textColor="@color/white"
+        android:layout_below="@+id/textView5"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>
