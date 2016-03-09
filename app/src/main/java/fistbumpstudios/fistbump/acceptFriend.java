@@ -22,12 +22,18 @@ import java.io.OutputStreamWriter;
 
 public class acceptFriend extends AppCompatActivity {
     String infoRaw;
+    String[] infoArray;
     final public static String friendFile = "friends.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accept_friend);
+        infoArray =  infoRaw.split(";");
+
+        TextView friendName = (TextView) findViewById(R.id.textview_acceptFriend);
+        String text = "Accept friend request from " + infoArray[0] + "?";
+        friendName.setText(text);
     }
 
     @Override
@@ -60,7 +66,6 @@ public class acceptFriend extends AppCompatActivity {
     }
 
     public void accept(View view) throws JSONException, IOException {
-        String[] infoArray =  infoRaw.split(";");
         JSONObject obj = new JSONObject();
         obj.put("name", infoArray[0]);
         obj.put("MACAddress", infoArray[1]);

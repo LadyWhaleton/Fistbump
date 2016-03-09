@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.media.ThumbnailUtils;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -52,6 +55,8 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
     private Object peer_discover_lock;
     private boolean peer_discover_flag;
     public static String userName;
+    public static String profilePicPath;
+
     NfcAdapter nfc;
     static Context context;
 
@@ -86,6 +91,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         userName = preferences.getString("UserName", null);
+        profilePicPath = preferences.getString("profilePic", null);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -111,7 +117,10 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         navUsername.setText(userName);
         navUsername.setTypeface(titleFont);
-        navProfilePic.setImageDrawable(getResources().getDrawable(R.drawable.profile_gray));
+
+        Bitmap profilePic = getThumbnail(profilePicPath);
+        navProfilePic.setImageBitmap(profilePic);
+
 
         //make dialog
 
@@ -166,6 +175,11 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
             }}
         });
+    }
+
+    private Bitmap getThumbnail(String path)
+    {
+        return ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(profilePicPath), 256, 256);
     }
 
     private boolean checkNewUser(){
