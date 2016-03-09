@@ -163,6 +163,8 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         peer_discovery_thread = new Thread(new Peer_discovery_thread());
         peer_discovery_thread.start();
 
+
+
         nfc = NfcAdapter.getDefaultAdapter(this);
         final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

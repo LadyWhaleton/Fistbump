@@ -68,6 +68,13 @@ public class buddiesTab extends android.support.v4.app.Fragment {
         buddylistView = (ListView) getView().findViewById(R.id.buddylistView);
         emptyListView = (TextView) getView().findViewById(R.id.emptyBuddylistView);
         buddylistView.setEmptyView(emptyListView);
+        try {
+            tabbedMain.add_friend("S6", "ea:50:8b:52:43:17");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         LoadBuddies();
         setListClickListener();
     }

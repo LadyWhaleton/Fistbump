@@ -2,6 +2,7 @@ package fistbumpstudios.fistbump;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -125,6 +126,12 @@ public class WifiDirect {
 
                         CommunicationThread commThread = new CommunicationThread(socket);
                         new Thread(commThread).start();
+                        Intent intent = new Intent(tabbedMain.context, conversation.class);
+                        intent.putExtra("name", "Chat");
+                        intent.putExtra("id", friend_mac_addr);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        tabbedMain.context.startActivity(intent);
                     }
                 }
             } catch (IOException e) {
@@ -152,6 +159,12 @@ public class WifiDirect {
                         }
                         CommunicationThread commThread = new CommunicationThread(clientSocket);
                         new Thread(commThread).start();
+                        Intent intent = new Intent(tabbedMain.context, conversation.class);
+                        intent.putExtra("name", "Chat");
+                        intent.putExtra("id", friend_mac_addr);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        tabbedMain.context.startActivity(intent);
                         break;
                     }
                 } catch (IOException e) {
@@ -378,7 +391,7 @@ public class WifiDirect {
                         }
                         if (!auxillary.equals(p2p_mac_address)) {
                             if (serverSocket != null) // redistribute file if server
-                                ;//TODO: make profile pic redistribution
+                                ;//redirect_profile_pic();//TODO: make profile pic redistribution
                             if (!buddy_found)
                                 file.delete();
                         }
@@ -653,8 +666,11 @@ public class WifiDirect {
         copy_Byte_Array(bytes, int_To_Byte_Array(dst_length), 8, 4);
         copy_Byte_Array(bytes, int_To_Byte_Array(message_length), 12, 4);
         Socket clientSocket = mac_to_socket_map.get(dest_mac_address);
+        if (clientSocket == null)
+            return;
 
         try {
+
             if (!clientSocket.isConnected()) // skips and removes dead sockets
             {
                 clientSockets.remove(clientSocket);
