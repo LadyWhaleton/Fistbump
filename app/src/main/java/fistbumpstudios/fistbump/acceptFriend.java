@@ -40,6 +40,8 @@ public class acceptFriend extends AppCompatActivity {
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             infoRaw = new String(message.getRecords()[0].getPayload());
+
+            // TODO: COMMENT THIS TOAST
             Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
         }
     }

@@ -48,7 +48,7 @@ public class setUserName extends AppCompatActivity {
         String uname = mEdit.getText().toString();
 
         if(uname.equals("")){
-            Toast.makeText(this, "Enter a username!" + uname,
+            Toast.makeText(this, "You must enter a username! >:(",
                     Toast.LENGTH_SHORT).show();
             return;
         }

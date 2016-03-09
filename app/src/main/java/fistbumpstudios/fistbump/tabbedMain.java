@@ -172,7 +172,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String name = preferences.getString("UserName", null);
         String pic = preferences.getString("profilePic", null);
-        Toast.makeText(this, name+pic, Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, name+pic, Toast.LENGTH_SHORT).show();
         if( (name != null) && (pic != null) ){
             return false;
         }
@@ -182,7 +182,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
     public boolean checkForNFC() {
         if( nfc == null){
-            Toast.makeText(this, "No NFC available",
+            Toast.makeText(this, "Your device does not support NFC.",
                     Toast.LENGTH_SHORT).show();
             return false;
         }
