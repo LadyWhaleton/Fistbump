@@ -32,7 +32,7 @@ import java.util.List;
 
 
 public class conversation extends AppCompatActivity {
-    String username, buddyName;
+    public static String username, buddyName;
     String logFilename;
     String id;
     public static ListView convolistView;
@@ -145,15 +145,15 @@ public class conversation extends AppCompatActivity {
 
             // if there's no instance of this view
             if (view == null) {
-                if (currentMsg.getSenderName().equals(tabbedMain.userName)) {
+                WifiDirect.display_message(currentMsg.getSenderName() + "...." + conversation.username);
+
+                if (currentMsg.getSenderName().equals(conversation.username)) {
                     view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
-                } else {
+                }
+                else {
                     view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
                 }
             }
-
-
-
             TextView body = (TextView) view.findViewById(R.id.msgBody);
             body.setText(currentMsg.getMessageBody());
 
@@ -176,7 +176,7 @@ public class conversation extends AppCompatActivity {
         String timeCreated = df.format(new Date());
         String msg = mEdit.getText().toString();
         JSONObject obj = new JSONObject();
-        obj.put("name", buddyName);
+        obj.put("name", username);
         obj.put("body", msg);
         obj.put("time", timeCreated);
 
