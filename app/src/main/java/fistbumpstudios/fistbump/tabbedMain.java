@@ -144,8 +144,8 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
 
         // add the tab icons
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[2]); // originally messages, now mediagallery
+        //tabLayout.getTabAt(2).setIcon(tabIcons[2]); // originally media gallery
 
         WifiDirect.mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         WifiDirect.mChannel = WifiDirect.mManager.initialize(this, getMainLooper(), null);
@@ -253,9 +253,11 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
                 case 0:
                     buddiesTabFragment = new buddiesTab();
                     return buddiesTabFragment;
+                /*
                 case 1:
                     return new messagesTab();
-                case 2:
+                    */
+                case 1:
                     return new MediaGalleryTab();
                 default:
                     return null;
@@ -266,7 +268,7 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -275,9 +277,11 @@ public class tabbedMain extends AppCompatActivity implements NfcAdapter.CreateNd
             switch (position) {
                 case 0:
                     return getString(R.string.title_tab_section1);
+                /*
                 case 1:
                     return getString(R.string.title_tab_section2);
-                case 2:
+                    */
+                case 1:
                     return getString(R.string.title_tab_section3);
             }
             return null;

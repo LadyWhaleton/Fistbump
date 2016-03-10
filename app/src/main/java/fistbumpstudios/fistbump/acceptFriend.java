@@ -29,11 +29,6 @@ public class acceptFriend extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accept_friend);
-        infoArray =  infoRaw.split(";");
-
-        TextView friendName = (TextView) findViewById(R.id.textview_acceptFriend);
-        String text = "Accept friend request from " + infoArray[0] + "?";
-        friendName.setText(text);
     }
 
     @Override
@@ -46,9 +41,12 @@ public class acceptFriend extends AppCompatActivity {
 
             NdefMessage message = (NdefMessage) rawMessages[0]; // only one message transferred
             infoRaw = new String(message.getRecords()[0].getPayload());
+            infoArray =  infoRaw.split(";");
 
-            // TODO: COMMENT THIS TOAST
-            Toast.makeText(this, infoRaw , Toast.LENGTH_LONG).show();
+            TextView friendName = (TextView) findViewById(R.id.textview_acceptFriend);
+            String text = "Accept friend request from " + infoArray[0] + "?";
+            friendName.setText(text);
+
         }
     }
 

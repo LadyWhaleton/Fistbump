@@ -22,7 +22,9 @@ public class SplashActivity extends Activity {
             "Whales.",
             "FALCON PUNCH!",
             "Hello World.",
-            "Don't break your phones! :)"
+            "Don't break your phones! :)",
+            "Totally not inspired by Discord.",
+            "Your will, my hands."
     };
 
     @Override
