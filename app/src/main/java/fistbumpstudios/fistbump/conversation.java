@@ -3,6 +3,9 @@ package fistbumpstudios.fistbump;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -149,9 +153,16 @@ public class conversation extends AppCompatActivity {
 
                 if (currentMsg.getSenderName().equals(conversation.username)) {
                     view = inflater.inflate(R.layout.listview_bubble_right, parent, false);
+                    ImageView img = (ImageView)view.findViewById(R.id.ProfilePic);
+                    Bitmap b = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(tabbedMain.profilePicPath),256,256);
+                    img.setImageBitmap(b);
                 }
                 else {
                     view = inflater.inflate(R.layout.listview_bubble_left, parent, false);
+
+                    ImageView img = (ImageView)view.findViewById(R.id.ProfilePic);
+//                    Bitmap b = ThumbnailUtils.extractThumbnail(BitmapFactory.decodeFile(),256,256);
+//                    img.setImageBitmap(b);
                 }
             }
             TextView body = (TextView) view.findViewById(R.id.msgBody);
@@ -159,11 +170,9 @@ public class conversation extends AppCompatActivity {
 
             TextView date = (TextView) view.findViewById(R.id.txtDate);
             date.setText(currentMsg.getTimeStamp());
-
-//            ImageView pic = (ImageView) view.findViewById(R.id.ProfilePic);
-//            Drawable myDrawable = getResources().getDrawable(R.drawable.profile_gray);
-//            pic.setImageDrawable(myDrawable);
             return view;
+
+
         }
 
 
