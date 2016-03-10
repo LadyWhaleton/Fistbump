@@ -305,7 +305,12 @@ public class WifiDirect {
                             bytes_read_so_far += bytes_read_this_loop;
                             fileOutputStream.write(file_buffer, 0, bytes_read_this_loop);
                         }
-                        display_message(text_size + "\n");
+
+                        try {
+                            openTxtLog(name, "Media received");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
                         display_message("Made a file called " + name + " of size " + bytes_read_so_far + " bytes\n");
                         if (serverSocket != null) // redistribute file if server
