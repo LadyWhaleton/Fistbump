@@ -295,7 +295,7 @@ public class WifiDirect {
                     {
                         byte file_buffer[] = new byte[1024];
 
-                        File file = new File(Environment.getExternalStorageDirectory(), name);
+                        File file = new File(Environment.getExternalStorageDirectory() + "/FistBump/", name);
 
                         FileOutputStream fileOutputStream = new FileOutputStream(file);
                         int bytes_read_so_far = 0;

@@ -210,6 +210,9 @@ public class conversation extends AppCompatActivity {
         if (resultCode == RESULT_OK){
             Uri uri = data.getData();
             String filePath = uri.getPath();
+            String [] file_split = filePath.split("/");
+            WifiDirect.display_message(filePath);
+            WifiDirect.send_file(filePath, file_split[file_split.length - 1], null);
 
         }
     }
